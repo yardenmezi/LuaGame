@@ -1,27 +1,37 @@
-Figure = Class{}
--- Figure = Collidble:new()
-img = love.graphics.newImage('img.png')
+require 'Collidable'
+-- Figure = Class{}
+-- TODO: HANDLE THE LOCAL!!!! IN Figure = {}
+Figure = {}
+Figure.__index = Figure
+setmetatable(Figure, {
+  __index = Collidable,
+  __call = function (cls, ...)
+    local self = setmetatable({}, cls)
+    self:init(...)
+    return self
+  end,
+})
 scaleX = 0.1
 scaleY = 0.1
-ACTION = {DOWN=1,UP=2,LEFT=3,RIGHT=4,NO_MOVE=5}
+ACTION = {DOWN=1, UP=2, LEFT=3, RIGHT=4, NO_MOVE=5}
+img = love.graphics.newImage('img.png')
+
 -- ACTION = {[DOWN]='S',UP='W',LEFT='A',RIGHT='D',NO_MOVE=' '}
 
 -- $$$$$$TODO: TODO : get the number of actions!!
 -- print(#ACTION)
 -- print(ACTION.UP)
 
+-- TODO: check if when I update the x it update also the Collidable
 function Figure:init(x, y)
+  sizeY = img:getHeight() * scaleY
+  sizeX = img:getWidth() * scaleX
+  Collidable.init(self, x,y,sizeX,sizeY)
   self.img = img
-  -- Define the place of the object.
-    self.x = x
-    self.y = y
-  -- Size of the figure
-    self.sizeY = img:getHeight() * scaleY
-    self.sizeX = img:getWidth() * scaleX
-    self.dx = 0
-    self.dy = 0
-    self.mass = 6
-    self.scrolling = 0
+  self.dx = 0
+  self.dy = 0
+  self.mass = 6
+  self.scrolling = 0
 end
 
 

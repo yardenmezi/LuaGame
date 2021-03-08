@@ -65,10 +65,11 @@ function love.update(dt)
   skyScroll = (skyScroll + 0.1) % BACKGROUND_LOOPING_POINT
 
   -- player.dy = player.dy + (player.mass * G)
-  if(player:collides(wall)) then
-    player.y = wall.y
+  player:handleCollision(wall)
+  -- if(player:collides(wall)) then
+    -- player.y = wall.y
     -- sounds['wall_hit']:play()
-  end
+  -- end
 
   player:update(dt)
   screenScroll = screenScroll + player:getScrolling()

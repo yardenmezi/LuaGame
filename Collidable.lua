@@ -1,31 +1,37 @@
-Collidble = Class{}
+Collidable = {}
+Collidable.__index = Collidable
 
-function Collidble:new(x,y,sizeX,sizeY):
+setmetatable(Collidable, {
+  __call = function (cls, ...)
+    local self = setmetatable({}, cls)
+    self:_init(...)
+    return self
+  end,
+})
+function Collidable:init(x,y,sizeX,sizeY)
   self.x = x
   self.y = y
   self.sizeX = sizeX
   self.sizeY = sizeY
 end
-function Collidble:init(x,y,sizeX,sizeY):
-  self.x = x
-  self.y = y
-  self.sizeX = sizeX
-  self.sizeY = sizeY
+
+function Collidable:checkCollisionX(solidObj)
+  maxVal = math.max(self.x + self.sizeX, solidObj.x + solidObj.sizeX)
+  minVal = math.min(self.x, solidObj.x)
+  -- print(maxVal)
+  -- return true
+  return solidObj.sizeX + self.sizeX <= maxVal - minVal
 end
 
-function Collidble:checkCollisionX(solidObj):
-  max = math.max(self.x + self.sizeX, solidObj.x + solidObj.sizeX) <= solidObj.sizeX
-  min = math.min(self.x, solidObj.x)
-  return solidObj.sizeX + self.sizeX <= max-min
-end
-
-function Collidble:checkCollisionY(solidObj):
-  max = math.max(self.y + self.sizeY, solidObj.y + solidObj.sizeY) <= solidObj.sizeY
+function Collidable:checkCollisionY(solidObj)
+  -- max = math.max(self.y + self.sizeY, solidObj.y + solidObj.sizeY) <= solidObj.sizeY
+  max = math.max(self.y + self.sizeY, solidObj.y + solidObj.sizeY)
   min = math.min(self.y, solidObj.y)
-  return solidObj.sizeY + self.sizeY <= max-min
+  -- return true
+  return (solidObj.sizeY + self.sizeY <= max-min)
 end
 
-function Collidble:responseCollision(solidObj):
+function Collidable:handleCollision(solidObj)
   if(self:checkCollisionX(solidObj)) then
     self.x = solidObj.x
   end

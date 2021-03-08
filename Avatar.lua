@@ -1,3 +1,5 @@
+
+require "Figure"
 Avatar = Class{}
 local giraffe = love.graphics.newImage('giraffe.png')
 local scaleX = 0.1
@@ -5,11 +7,23 @@ local scaleY = 0.1
 local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
+Avatar = {}
+Avatar.__index = Avatar
+setmetatable(Avatar, {
+  __index = Figure,
+  __call = function (cls, ...)
+    local self = setmetatable({}, cls)
+    self:init(...)
+    return self
+  end,
+})
+
 function Avatar:init(x, y)
-    self.x = x
-    self.y = y
-    self.sizeY = giraffe:getHeight() * scaleY
-    self.sizeX = giraffe:getWidth() * scaleX
+  Figure.init(self,x,y)
+    -- self.x = x
+    -- self.y = y
+    -- self.sizeY = giraffe:getHeight() * scaleY
+    -- self.sizeX = giraffe:getWidth() * scaleX
     self.dx = 0
     self.dy = 0
     self.mass = 6
