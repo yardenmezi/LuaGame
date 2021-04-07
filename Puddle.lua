@@ -3,7 +3,8 @@ local puddleScroll = 0
 local puddleImg = love.graphics.newImage('puddle.png')
 function Puddle:init(x_init)
   self.x = math.random(x_init + (width/30) , x_init + width/2)
-  self.y = wall.y
+  -- TODO:change value!
+  self.y = 20
   self.size = math.random(width/20, width/10)
 end
 

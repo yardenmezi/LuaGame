@@ -23,14 +23,14 @@ img = love.graphics.newImage('img.png')
 -- print(ACTION.UP)
 
 -- TODO: check if when I update the x it update also the Collidable
-function Figure:init(x, y)
-  sizeY = img:getHeight() * scaleY
-  sizeX = img:getWidth() * scaleX
-  Collidable.init(self, x,y,sizeX,sizeY)
+function Figure:init(x, y, g)
   self.img = img
+  sizeY = self.img:getHeight() * scaleY
+  sizeX = self.img:getWidth() * scaleX
+  Collidable.init(self, x,y,sizeX,sizeY)
   self.dx = 0
   self.dy = 0
-  self.mass = 6
+  self.gravityForce = 0
   self.scrolling = 0
 end
 
@@ -50,12 +50,16 @@ function Figure:move()
   elseif action == ACTION.RIGHT then
     self.dx = SPEED
   end
+  self:handleGravity()
   self.y = self.y + self.dy
   self.x = self.x + self.dx
   self.dx = 0
   self.dy = 0
 end
 
+function Figure:handleGravity()
+  self.y = self.y + self.gravityForce
+end
 
 function Figure:update(dt)
   self:move()
@@ -63,7 +67,7 @@ end
 
 
 function Figure:render()
-  love.graphics.draw(self.img, self.x, self.y, 0, scaleX, scaleY)
+  love.graphics.draw(self.img, self.x, self.y - self.sizeY, 0, scaleX, scaleY)
   -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
     -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
 end

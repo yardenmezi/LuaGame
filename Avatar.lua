@@ -18,15 +18,16 @@ setmetatable(Avatar, {
   end,
 })
 
-function Avatar:init(x, y)
-  Figure.init(self,x,y)
+function Avatar:init(x, y,g)
+  Figure.init(self,x,y,g)
     -- self.x = x
     -- self.y = y
     -- self.sizeY = giraffe:getHeight() * scaleY
     -- self.sizeX = giraffe:getWidth() * scaleX
+    self.img =giraffe
     self.dx = 0
     self.dy = 0
-    self.mass = 6
+    self.gravityForce = 0.1 * g
     self.scrolling = 0
 end
 
@@ -34,53 +35,64 @@ function makeNoise()
   sounds['bark']:play()
 end
 
-function Avatar:collides(wall)
-  if self.y < wall.y then
-    onGround = false
-    return false
-  end
-  onGround = true
-  return true
-end
+-- function Avatar:collides(wall)
+--   if self.y < wall.y then
+--     onGround = false
+--     return false
+--   end
+--   onGround = true
+--   return true
+-- end
 
 
 function Avatar:getScrolling()
-  return scrolling
+  return self.scrolling
 end
+
+function Avatar:getAction()
+  -- TODO: handle the case of off ground (variable onGround)
+  if keypressed == "space" then
+    return ACTION.UP
+  elseif love.keyboard.isDown("right") then
+    return ACTION.RIGHT
+  elseif love.keyboard.isDown("left") then
+    return ACTION.LEFT
+  elseif love.keyboard.isDown("down") then
+    return ACTION.DOWN
+  end
+  -- if love.keyboard.isDown("w") then
+  --   makeNoise()
+  -- end
+end
+function Avatar:handleScrolling()
+  -- TODO: MOVE TO MAIN Class
+  rightLim =  width*6/8
+  leftLim = width/8
+  if self.x > rightLim then
+    self.scrolling = self.x- rightLim
+    self.x = rightLim
+  elseif self.x <leftLim then
+    self.scrolling =  self.x-leftLim
+    self.x = leftLim
+  else
+    self.scrolling = 0
+  end
+end
+
 
 function Avatar:update(dt)
-  if keypressed == "space" and onGround == true then
-    self.dy = -20 * SPEED
-  end
-  if love.keyboard.isDown("w") then
-    makeNoise()
-  end
-   if love.keyboard.isDown("down") then
-     self.dy = SPEED
-   end
-  if love.keyboard.isDown("left") then
-    self.dx = -SPEED
-  end
-  if love.keyboard.isDown("right") then
-    self.dx = SPEED
-  end
-  if (self.x < width/4 and self.dx>0) or (self.x > width/10 and self.dx<0) then
-    self.x = self.x + self.dx
-  else
-    scrolling = self.dx
-  end
-  self.dy = self.dy + GRAVITY * dt * 10
-  self.y = self.y + self.dy
-  -- self.y = self.y + self.dy
-  -- self.y = self.y - (giraffe:getHeight() * scaleY)
-  self.dx = 0
-  self.dy = 0
-  -- print(x)
+  self:move()
+  self:handleScrolling()
+  -- TODO: handle GRAVITY
+  -- TODO: HANDLE other actions
 end
 
 
-function Avatar:render()
-  love.graphics.draw(giraffe, self.x, self.y - self.sizeY, 0, scaleX,scaleY)
-  -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
-    -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
-end
+-- function Avatar:render()
+--   love.graphics.draw(giraffe, self.x, self.y - self.sizeY, 0, scaleX,scaleY)
+--   -- love.graphics.draw(giraffe, 0, 0, 0, scaleX,scaleY)
+--   -- love.graphics.draw(giraffe, self.x, self.y - self.sizeY, 0, scaleX,scaleY)
+--
+--   -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+--     -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
+-- end
