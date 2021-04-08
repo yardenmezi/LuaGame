@@ -1,11 +1,25 @@
-Puddle = Class{}
+require "Collidable"
+-- Puddle = Class{}
+Puddle = {}
+Puddle.__index = Puddle
+setmetatable(Puddle, {
+  __index = Collidable,
+  __call = function (cls, ...)
+    local self = setmetatable({}, cls)
+    self:init(...)
+    return self
+  end,
+})
+
 local puddleScroll = 0
 local puddleImg = love.graphics.newImage('puddle.png')
 function Puddle:init(x_init)
   self.x = math.random(x_init + (width/30) , x_init + width/2)
   -- TODO:change value!
-  self.y = 20
+  self.y = 420
+
   self.size = math.random(width/20, width/10)
+  Collidable.init(self, self.x,self.y,self.size,10)
 end
 
 function Puddle:getPuddleEnd()

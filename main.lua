@@ -35,28 +35,18 @@ function setObjects()
   collidableObjects[#collidableObjects + 1] = Wall(0, height*(3/4), floorImg:getWidth(), 20)
   collidableObjects[#collidableObjects + 1] = Figure(100,100,g)
   -- TODO: INSERT PADDLES
-  -- local startX = width*(1/5)
-  -- for i=1,NUM_PUDDLES do
-  --   if i>1 then
-  --     startX  = collidableObjects[#collidableObjects]:getPuddleEnd()
-  --   end
-  --    collidableObjects[#collidableObjects+1] = Puddle(startX)
-  -- end
-
-  -- fig = Figure(100,100,g)
-  -- wall = Wall(0, height*(3/4), floorImg:getWidth(), 20)
-  player = Avatar(200, 20, g)
-  -- puddles = {}
-  -- for i=1,NUM_PUDDLES do
-  --   if i>1 then
-  --     startX  = puddles[i-1]:getPuddleEnd()
-  --   end
-  --   puddles[i] = Puddle(startX)
-  -- end
-  coins = {}
-  for i=1,NUM_COINS do
-    coins[i] = Coin()
+  local startX = width*(1/5)
+  for i=1,NUM_PUDDLES do
+    if i>1 then
+      startX  = collidableObjects[#collidableObjects]:getPuddleEnd()
+    end
+     collidableObjects[#collidableObjects+1] = Puddle(startX)
   end
+  player = Avatar(200, 20, g)
+  -- coins = {}
+  -- for i=1,NUM_COINS do
+  --   coins[i] = Coin()
+  -- end
 end
 
 function love.load()
@@ -79,28 +69,16 @@ function love.update(dt)
   skyScroll = (skyScroll + 0.1) % BACKGROUND_LOOPING_POINT
   screenScroll = screenScroll + player:getScrolling()
   for i=1,#collidableObjects do
-    -- if player:collides(collidableObjects[i]) then
-      -- player:handleCollision(collidableObjects[i])
-      player:handleCollision(collidableObjects[i])
-      collidableObjects[i]:handleCollision(player)
-    -- end
+    player:handleCollision(collidableObjects[i])
+    collidableObjects[i]:handleCollision(player)
   end
-  -- fig:update()
-  -- player.dy = player.dy + (player.mass * G)
-
-  -- player:handleCollision(wall)
-  -- wall:handleCollision(player)
-  -- player:handleCollision(wall)
-
-
-  -- if(player:collides(wall)) then
-    -- player.y = wall.y
-    -- sounds['wall_hit']:play()
-  -- end
-
-
-  -- for i=1, NUM_PUDDLES do
-  --   puddles[i]:update(dt)
+  -- TODO: SHOULD HANDLE ALL Collidable OBJECTS COLLISIONS WITH EACH OTHER.
+  -- TODO: problem is- the wall and the paddle are always colliding and etc, and paddles with each others..
+  -- for k=1,#collidableObjects do
+  --   for j=1,#collidableObjects do
+  --     collidableObjects[k]:handleCollision(collidableObjects[j])
+  --     collidableObjects[j]:handleCollision(collidableObjects[k])
+  --   end
   -- end
 
 -- issue: NUM_COINS is smaller after delete
@@ -139,13 +117,8 @@ function love.draw()
   for i=1,#collidableObjects do
     collidableObjects[i]:render()
   end
-  -- wall: render()
-  -- for i=1,NUM_PUDDLES do
-  --   puddles[i]: render()
-  -- end
   -- for i,coin in pairs(coins) do
   --   coin: render()
   -- end
   player: render()
-  -- fig:render()
 end

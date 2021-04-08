@@ -28,7 +28,8 @@ function Wall:init(x,y,sizeX,sizeY)
   -- self.y = y
 end
 
-function Collidable:handleCollision(solidObj)
+function Wall:handleCollision(solidObj)
+
 end
 
 function Wall:render()

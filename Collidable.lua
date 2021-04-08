@@ -22,7 +22,7 @@ function Collidable:update(dt)
 end
 
 function Collidable:handleBlockCollision(solidObj)
-  self.y = solidObj.y - self.sizeY - solidObj.size
+  self.y = solidObj.y - self.sizeY - solidObj.sizeY
   -- solidObj.y = self.y - solidObj.sizeY - solidObj.sizeY
 end
 
@@ -38,7 +38,7 @@ end
 function Collidable:checkCollision(solidObj)
   if solidObj.sizeX + self.sizeX > math.max(self.sizeX+self.x, solidObj.sizeX + solidObj.x) - math.min(self.x,solidObj.x) then
     -- TODO: TEMP
-    return solidObj.sizeY + self.sizeY + solidObj.sizeY + self.sizeY > math.max(self.sizeY + self.y, solidObj.sizeY + solidObj.y) - math.min(self.y, solidObj.y)
+    return solidObj.sizeY + self.sizeY > math.max(self.sizeY + self.y, solidObj.sizeY + solidObj.y) - math.min(self.y, solidObj.y)
     -- return solidObj.sizeY + self.sizeY > math.max(self.sizeY + self.y, solidObj.sizeY + solidObj.y) - math.min(self.y, solidObj.y)
   else
     return false
@@ -46,7 +46,6 @@ function Collidable:checkCollision(solidObj)
 end
 
 function Collidable:handleCollision(solidObj)
-  print("hiiiiii")
   if self:checkCollision(solidObj) then
     if solidObj.collisionType == collisionType.BLOCK then
       self:handleBlockCollision(solidObj)
