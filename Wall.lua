@@ -1,6 +1,6 @@
 -- Wall = Class{}
 require 'Collidable'
-floorImg = love.graphics.newImage('GreenGrass.jpeg')
+floorImg = love.graphics.newImage('GreenGrass.png')
 local scaleX = 0.1
 local scaleX = 0.2
 -- Figure = Class{}
@@ -20,12 +20,8 @@ function Wall:init(x,y,sizeX,sizeY)
   -- TODO: Currently the size means nothing. the real size of the picture is defined by the image size.
   -- TODO: NEED FUNCTION WHO DEFINES THE RIGHT SIZE
   self.scaleY = sizeY/floorImg:getHeight()
-  -- print("logging")
-  -- print(self.scaleY)
   Collidable.init(self, x, y ,sizeX, sizeY)
   self.collisionType = collisionType.BLOCK
-  -- self.x = x
-  -- self.y = y
 end
 
 function Wall:handleCollision(solidObj)

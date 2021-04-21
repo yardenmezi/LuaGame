@@ -2,8 +2,6 @@
 require "Figure"
 Avatar = Class{}
 local giraffe = love.graphics.newImage('giraffe.png')
-local scaleX = 0.1
-local scaleY = 0.1
 local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
@@ -19,19 +17,22 @@ setmetatable(Avatar, {
 })
 
 function Avatar:init(x, y,g)
-  Figure.init(self,x,y,g)
+
     -- self.x = x
     -- self.y = y
     -- self.sizeY = giraffe:getHeight() * scaleY
     -- self.sizeX = giraffe:getWidth() * scaleX
-    self.img =giraffe
+    -- self.img =giraffe
+    Figure.init(self,x,y,g,giraffe,100,100)
     self.dx = 0
     self.dy = 0
     self.gravityForce = 0.1 * g
     self.scrolling = 0
+    self.collisionType = collisionType.PLAYER
+
 end
 
-function makeNoise()
+function Avatar:makeNoise()
   sounds['bark']:play()
 end
 
@@ -51,7 +52,7 @@ end
 
 function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
-  if keypressed == "space" then
+  if keypressed == "space" and self.onGround == true then
     return ACTION.UP
   elseif love.keyboard.isDown("right") then
     return ACTION.RIGHT
@@ -72,8 +73,8 @@ function Avatar:handleScrolling()
     self.scrolling = self.x- rightLim
     self.x = rightLim
   elseif self.x <leftLim then
-    self.scrolling =  self.x-leftLim
-    self.x = leftLim
+      self.scrolling =  self.x-leftLim
+      self.x = leftLim
   else
     self.scrolling = 0
   end
@@ -83,7 +84,6 @@ end
 function Avatar:update(dt)
   self:move()
   self:handleScrolling()
-  -- TODO: handle GRAVITY
   -- TODO: HANDLE other actions
 end
 

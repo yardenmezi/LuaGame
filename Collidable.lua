@@ -1,6 +1,6 @@
 Collidable = {}
 Collidable.__index = Collidable
-collisionType = {BLOCK=1, HARM=3, REGULAR=4}
+collisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
 
 setmetatable(Collidable, {
   __call = function (cls, ...)
@@ -15,20 +15,37 @@ function Collidable:init(x,y,sizeX,sizeY)
   self.y = y
   self.sizeX = sizeX
   self.sizeY = sizeY
-  self.collisionType = collisionType.REGULAR
+  self.collisionType = collisionType.BLOCK
 end
 
 function Collidable:update(dt)
 end
 
+
+function Collidable:handlePrizeCollision(solidObj)
+  -- if solidObj.collisionType == collisionType.PLAYER then
+  --   print("logging")
+  --   return true
+  -- end
+  -- return false
+end
+function Collidable:setHeight(newY)
+  self.y = newY
+end
 function Collidable:handleBlockCollision(solidObj)
-  self.y = solidObj.y - self.sizeY - solidObj.sizeY
-  -- solidObj.y = self.y - solidObj.sizeY - solidObj.sizeY
+  self:setHeight(solidObj.y - self.sizeY)
+  --  if it's above.
+  -- if self.y + self.sizeY  < solidObj.y then
+    -- self.y =
+  -- else
+    -- self.x = solidObj.x - self.sizeX
+  -- end
 end
 
 function Collidable:handleRegCollision(solidObj)
   self.x = self.x- 60
-  self.y = self.y- 60
+  -- self.y = self.y- 60
+  self:setHeight(self.y- 60)
 end
 
 function Collidable:handleHarmCollision(solidObj)
@@ -37,26 +54,27 @@ end
 
 function Collidable:checkCollision(solidObj)
   if solidObj.sizeX + self.sizeX > math.max(self.sizeX+self.x, solidObj.sizeX + solidObj.x) - math.min(self.x,solidObj.x) then
-    -- TODO: TEMP
     return solidObj.sizeY + self.sizeY > math.max(self.sizeY + self.y, solidObj.sizeY + solidObj.y) - math.min(self.y, solidObj.y)
-    -- return solidObj.sizeY + self.sizeY > math.max(self.sizeY + self.y, solidObj.sizeY + solidObj.y) - math.min(self.y, solidObj.y)
   else
     return false
   end
 end
 
 function Collidable:handleCollision(solidObj)
+
   if self:checkCollision(solidObj) then
     if solidObj.collisionType == collisionType.BLOCK then
-      self:handleBlockCollision(solidObj)
+      return self:handleBlockCollision(solidObj)
     elseif solidObj.collisionType == collisionType.HARM then
-      self:handleHarmCollision(solidObj)
+      return self:handleHarmCollision(solidObj)
     elseif solidObj.collisionType == collisionType.REGULAR then
-      self:handleRegCollision(solidObj)
+      return self:handleRegCollision(solidObj)
+    elseif solidObj.collisionType == collisionType.PRIZE then
+      -- TODO FOR SOME RESON, WHEN IT'S "FALSE, THE COINS HANDLES LIKE REGULAR COLLISION"
+      return self:handlePrizeCollision(solidObj)
+      -- self:handleRegCollision(solidObj)
     end
   end
-  -- if self:checkCollision(solidObj) then
-  --   solidObj.y = self.y - solidObj.sizeY - solidObj.sizeY
-  --   -- solidObj.y = self.y - solidObj.sizeY - solidObj.sizeY
-  -- end
+  -- TODO: false for needed to delete object
+  return false
 end
