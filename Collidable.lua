@@ -1,7 +1,7 @@
 Collidable = {}
-Collidable.__index = Collidable
 collisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
 
+Collidable.__index = Collidable
 setmetatable(Collidable, {
   __call = function (cls, ...)
     local self = setmetatable({}, cls)
@@ -49,7 +49,9 @@ function Collidable:handleRegCollision(solidObj)
 end
 
 function Collidable:handleHarmCollision(solidObj)
-  self:handleRegCollision()
+  self.x = self.x- 60
+  -- self.y = self.y- 60
+  self:setHeight(self.y + 20)
 end
 
 function Collidable:checkCollision(solidObj)

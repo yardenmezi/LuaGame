@@ -16,14 +16,14 @@ setmetatable(Avatar, {
   end,
 })
 
-function Avatar:init(x, y,g)
+function Avatar:init(board,x, y,g)
 
     -- self.x = x
     -- self.y = y
     -- self.sizeY = giraffe:getHeight() * scaleY
     -- self.sizeX = giraffe:getWidth() * scaleX
     -- self.img =giraffe
-    Figure.init(self,x,y,g,giraffe,100,100)
+    Figure.init(self,board,x,y,g,giraffe,100,100)
     self.dx = 0
     self.dy = 0
     self.gravityForce = 0.1 * g
@@ -52,7 +52,7 @@ end
 
 function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
-  if keypressed == "space" and self.onGround == true then
+  if keypressed == "space" then
     return ACTION.UP
   elseif love.keyboard.isDown("right") then
     return ACTION.RIGHT

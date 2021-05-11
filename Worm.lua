@@ -15,7 +15,8 @@ setmetatable(Worm, {
   end,
 })
 function Worm:init(x, y,g)
-    Figure.init(self,x,y,g,wormImg,30,30)
+    Figure.init(self,x,y,g,wormImg,70,70)
+    self.collisionType = collisionType.REGULAR
 end
 
 function Worm:getAction()

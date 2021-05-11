@@ -16,3 +16,10 @@ function Butterfly:init(x, y,g)
   -- fakeX = x-
   Still.init(self,x,y,60,60,butterflyImg)
 end
+
+
+function Butterfly:render()
+  if self.isVisible then
+    love.graphics.draw(self.img, self.x, self.y - 40, 0, self.scaleX, self.scaleY)
+  end
+end

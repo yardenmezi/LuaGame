@@ -18,7 +18,7 @@ function Coin:init()
   -- self.x = 0
   -- self.y = 0
   x = math.random(-width,width)
-  y = math.random(height/3, height/2)
+  y = math.random(0, height/2)
   Still.init(self,x,y,60,60,coinImg)
   self.collisionType = collisionType.PRIZE
   -- self.img = coinImg
