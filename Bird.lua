@@ -1,7 +1,7 @@
 require "Enemy"
 -- Bird = Class{}
 
-local birdPic = love.graphics.newImage('bird.jpeg')
+local birdPic = love.graphics.newImage('images/bird.jpeg')
 Bird  = {}
 Bird.__index = Bird
 setmetatable(Bird, {

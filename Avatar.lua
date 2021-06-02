@@ -1,7 +1,7 @@
 
 require "Figure"
 Avatar = Class{}
-local giraffe = love.graphics.newImage('giraffe.png')
+local giraffe = love.graphics.newImage('images/giraffe.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
@@ -65,9 +65,11 @@ function Avatar:getAction()
   --   makeNoise()
   -- end
 end
+
 function Avatar:handleScrolling()
   -- TODO: MOVE TO MAIN Class
-  rightLim =  width*6/8
+  -- rightLim =  width*6/8
+  rightLim =  width-120
   leftLim = width/8
   if self.x > rightLim then
     self.scrolling = self.x- rightLim

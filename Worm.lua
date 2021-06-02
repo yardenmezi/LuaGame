@@ -1,6 +1,6 @@
 require "Figure"
 -- Worm = Class{}
-local wormImg = love.graphics.newImage('worm.png')
+local wormImg = love.graphics.newImage('images/worm.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
@@ -14,8 +14,9 @@ setmetatable(Worm, {
     return self
   end,
 })
-function Worm:init(x, y,g)
-    Figure.init(self,x,y,g,wormImg,70,70)
+
+function Worm:init(board,x, y,g)
+    Figure.init(self,board,x,y,g,wormImg,70,70)
     self.collisionType = collisionType.REGULAR
 end
 

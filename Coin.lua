@@ -1,5 +1,5 @@
 Coin = Class{}
-local coinImg = love.graphics.newImage('leaf.png')
+local coinImg = love.graphics.newImage('images/leaf.png')
 -- local coinScroll = 0
 
 

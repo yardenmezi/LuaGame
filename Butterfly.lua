@@ -1,5 +1,5 @@
 require "Still"
-local butterflyImg = love.graphics.newImage('butterfly.png')
+local butterflyImg = love.graphics.newImage('images/butterfly.png')
 
 Butterfly = {}
 Butterfly.__index = Butterfly

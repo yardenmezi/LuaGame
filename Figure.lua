@@ -63,7 +63,7 @@ end
 function Figure:move()
   action = self:getAction()
   if action == ACTION.UP and self.onGround ==true then
-    self.dy = -self.speed * 20
+    self.dy = -self.speed * 6
   elseif action == ACTION.DOWN then
     self.dy = self.speed
   elseif action == ACTION.LEFT then
@@ -94,8 +94,8 @@ end
 
 function Figure:handleBlockCollision(solidObj)
   --  if it's above.
-  if self.y + self.sizeY - SPEED -self.gravityForce  <= solidObj.y then
-    self:setHeight( solidObj.y - self.sizeY)
+  if self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y then
+    self:setHeight(solidObj.y - self.sizeY)
     self.onGround = true
   end
 end
@@ -118,7 +118,7 @@ end
 function Figure:handleGravity()
   -- self.y = self.y + self.gravityForce
   -- if not self.board:hasCollision(self.x, self.y+self.gravityForce) then
-    self:setHeight(self.y + self.gravityForce)
+    self:setHeight(self.y + self.gravityForce*5)
   -- end
 
 end

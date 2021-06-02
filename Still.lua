@@ -11,8 +11,7 @@ setmetatable(Still, {
   end,
 })
 
-local stillScroll = 0
-local puddleImg = love.graphics.newImage('tree.png')
+local puddleImg = love.graphics.newImage('images/tree.png')
 
 -- -- TODO:THAT SHOULD BE A FACTORY.
 -- function Still:init(x_init)
@@ -20,7 +19,6 @@ local puddleImg = love.graphics.newImage('tree.png')
 --   -- TODO:change value!
 --   self.y = 420
 --   self.size = math.random(width/20, width/10)
---   self.stillScroll = 0
 --   self.img = puddleImg
 --   Collidable.init(self, self.x,self.y,self.size,10)
 -- end
@@ -33,7 +31,6 @@ function Still:init(x,y,sizeX,sizeY,img)
   self.scaleX = sizeX / self.img:getWidth()
   self.scaleY = sizeY / self.img:getHeight()
   Collidable.init(self, x,y, sizeX, sizeY)
-  self.stillScroll = 0
   self.isVisible = true
 end
 --
@@ -42,9 +39,7 @@ end
 -- end
 
 function Still:update(dt)
-    self.stillScroll = screenScroll
-    self.x = self.x - self.stillScroll
-  -- end
+    self.x = self.x - screenScroll
 end
 
 function Still:handleCollision(solidObj)
