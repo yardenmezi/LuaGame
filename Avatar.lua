@@ -17,34 +17,25 @@ setmetatable(Avatar, {
 })
 
 function Avatar:init(board,x, y,g)
-
-    -- self.x = x
-    -- self.y = y
-    -- self.sizeY = giraffe:getHeight() * scaleY
-    -- self.sizeX = giraffe:getWidth() * scaleX
-    -- self.img =giraffe
     Figure.init(self,board,x,y,g,giraffe,100,100)
     self.dx = 0
     self.dy = 0
     self.gravityForce = 0.1 * g
     self.scrolling = 0
     self.collisionType = collisionType.PLAYER
+    self.madeNoise = false
+    self.isAlive = true
 
 end
 
 function Avatar:makeNoise()
   sounds['bark']:play()
+  self.madeNoise = true
 end
 
--- function Avatar:collides(wall)
---   if self.y < wall.y then
---     onGround = false
---     return false
---   end
---   onGround = true
---   return true
--- end
-
+function Avatar:hasMadeNoise()
+  return self.madeNoise
+end
 
 function Avatar:getScrolling()
   return self.scrolling
@@ -52,6 +43,7 @@ end
 
 function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
+  self.madeNoise = false
   if keypressed == "space" then
     return ACTION.UP
   elseif love.keyboard.isDown("right") then
@@ -61,22 +53,24 @@ function Avatar:getAction()
   elseif love.keyboard.isDown("down") then
     return ACTION.DOWN
   end
-  -- if love.keyboard.isDown("w") then
-  --   makeNoise()
-  -- end
+  if love.keyboard.isDown("w") then
+    self:makeNoise()
+  end
 end
 
 function Avatar:handleScrolling()
-  -- TODO: MOVE TO MAIN Class
-  -- rightLim =  width*6/8
-  rightLim =  width-120
+  -- TODO: MOVE TO MAIN Class?
+  rightLim =  width/3
   leftLim = width/8
   if self.x > rightLim then
     self.scrolling = self.x- rightLim
     self.x = rightLim
   elseif self.x <leftLim then
+    if not board:inBoardLimit(self.x-leftLim) then
       self.scrolling =  self.x-leftLim
-      self.x = leftLim
+    end
+    self.x = leftLim
+
   else
     self.scrolling = 0
   end
@@ -87,6 +81,12 @@ function Avatar:update(dt)
   self:move()
   self:handleScrolling()
   -- TODO: HANDLE other actions
+  if self.y > height then
+    self.isAlive = false
+  end
+end
+function Avatar:isAlive()
+  return self.isAlive
 end
 
 

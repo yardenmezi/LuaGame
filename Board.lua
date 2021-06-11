@@ -1,5 +1,6 @@
 Board = {}
 local grassImg = love.graphics.newImage('images/GreenGrass.png')
+local coinImg = love.graphics.newImage('images/leaf.png')
 
 Board.__index = Board
 setmetatable(Board, {
@@ -10,9 +11,9 @@ setmetatable(Board, {
   end,
 })
 
-local cell = {SKY=0,GROUND=1}
+local cell = {SKY=0,GROUND=1,LEAF=2}
 local TILE_WIDTH = 20
-local TILE_HEIGHT = 40
+local TILE_HEIGHT = 20
 local TILES_PER_ROW = 1050
 local TILES_PER_COL = 40
 local exists = false
@@ -27,44 +28,39 @@ local exists = false
 
 function Board:init(boardWidth,boardHeight)
   map = {}
-  print(boardHeight)
   TILES_PER_COL = boardHeight/TILE_HEIGHT
-  print(TILES_PER_COL)
+  randomPairs = {}
+  xbegin = 1
+  xend = math.ceil(SPEED*3/TILE_WIDTH)
+  for i=1,100 do
+    randomPairs[i] = {}
+    randomPairs[i]['x'] = math.random(xbegin, xend)
+    randomPairs[i]['sizex'] = math.random(5,15)
+    randomPairs[i]['y'] = math.random(TILES_PER_COL*4/5,TILES_PER_COL)
+    randomPairs[i]['sizey'] = math.random(1,3)
+    xbegin = xend+randomPairs[i]['sizex']
+    xend = math.min(xbegin+math.ceil(SPEED*15/TILE_WIDTH), TILES_PER_ROW-20)
+  end
   for i=1,TILES_PER_ROW do
     map[i] = {}
     for j=1,TILES_PER_COL do
-      -- map[i][j] = cell.GROUND
-      if j==TILES_PER_COL then
-        map[i][j] = cell.GROUND
-    elseif i>5 and i<10 and j>TILES_PER_COL-8 then
-        map[i][j] = cell.GROUND
-    elseif i>9 and i<15 and j ==TILES_PER_COL-2 then
-        map[i][j] = cell.GROUND
-    elseif i>25 and i<30 and j==TILES_PER_COL-3 then
-      map[i][j] = cell.GROUND
-    elseif i>35 and i<50 and j==TILES_PER_COL-4 then
-      map[i][j] = cell.GROUND
-    elseif i>15 and i<25 and j==TILES_PER_COL-9 then
-      map[i][j] = cell.GROUND
-    -- elseif i>55 and i<70 and j==TILES_PER_COL-2 then
-      -- map[i][j] = cell.GROUND
-    else
         map[i][j] = cell.SKY
+      for pairNum=1,100 do
+        if i>=randomPairs[pairNum]['x'] and i<=randomPairs[pairNum]['x']+randomPairs[pairNum]['sizex'] then
+          if j>=randomPairs[pairNum]['y'] and j<=randomPairs[pairNum]['y']+randomPairs[pairNum]['sizey'] then
+            map[i][j] = cell.GROUND
+          end
+        end
       end
     end
   end
-  -- map[1][1] = cell.GROUND
+
+  -- map[10][10] = cell.LEAF
   self.map = map
   self.tilesGap = 0
 end
 
 function Board:update(dt)
-  -- self.stillScroll = screenScroll
-  -- self.x = self.x - self.stillScroll
-  -- print("---")
-  -- print(screenScroll)
-  -- print(TILE_WIDTH)
-  -- print(screenScroll%TILE_WIDTH)
   if screenScroll%TILE_WIDTH==0 then
     if screenScroll<0 then
       self.tilesGap = self.tilesGap + math.floor(screenScroll/TILE_WIDTH)
@@ -72,7 +68,6 @@ function Board:update(dt)
       self.tilesGap = self.tilesGap + math.ceil(screenScroll/TILE_WIDTH)
     end
   end
-  -- print(self.tilesGap)
 end
 
 function Board:hasCollisionRange(posX,posY,sizeX,sizeY)
@@ -97,6 +92,14 @@ function Board:hasCollisionRange(posX,posY,sizeX,sizeY)
   -- end
 end
 
+
+function Board:inBoardLimit(scrolling)
+  if self.tilesGap == 0 and scrolling<0 then
+    return true
+  end
+  return false
+end
+
 function Board:hasCollision(posX,posY)
 
   if self.map[math.ceil(posX/TILE_WIDTH) + self.tilesGap][math.ceil(posY/TILE_HEIGHT)] == cell.GROUND then
@@ -117,6 +120,8 @@ function Board:render()
       if map[i][j] == cell.GROUND then
         -- love.graphics.draw(grassImg, (i-1)*TILE_WIDTH, (j-1)*TILE_HEIGHT,0, 0.1,0.1)
         love.graphics.draw(grassImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x, scale_y)
+      elseif map[i][j] == cell.LEAF then
+        love.graphics.draw(coinImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x, scale_y)
       end
     end
   end

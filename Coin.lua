@@ -15,13 +15,10 @@ setmetatable(Coin, {
 })
 
 function Coin:init()
-  -- self.x = 0
-  -- self.y = 0
-  x = math.random(-width,width)
+  x = math.random(0,width*6)
   y = math.random(0, height/2)
   Still.init(self,x,y,60,60,coinImg)
   self.collisionType = collisionType.PRIZE
-  -- self.img = coinImg
 end
 
 function Coin:handleCollision(solidObj)

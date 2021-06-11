@@ -19,7 +19,7 @@ local NUM_COINS = 20
 local NUM_PUDDLES = 20
 keypressed = {}
 ------ Game Definitions ------
-local sky = love.graphics.newImage('Sky.png')
+local sky = love.graphics.newImage('images/clouds.png')
 -- local ground = love.graphics.newImage('grass.png')
 love.window.setTitle('Grass And Sun ☼')
 sounds = {['wall_hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
@@ -36,7 +36,7 @@ end
 function puddlesPlacement(collidableObjects)
   local startX = width*(1/5)
   for i=1,NUM_PUDDLES do
-    x = math.random(startX + (width/3) , startX + width*2)
+    x = math.random(startX + (width/3) , startX + width*3)
     sizeX = math.random(width/7, width/2)
     sizeY = math.random(height/3, height/2)
     collidableObjects[#collidableObjects+1] = Still(x,560-sizeY,sizeX,sizeY)
@@ -51,18 +51,33 @@ function setObjects()
   -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
   collidableObjects[#collidableObjects + 1] = Bird(board,700,100,g)
   -- startX = 40
-  for i=1,10 do
-    x = math.random(0 ,width*4)
-    y = math.random(0 ,400)
-    collidableObjects[#collidableObjects + 1] = Butterfly(x,y,g)
-  end
   puddlesPlacement(collidableObjects)
   player = Avatar(board,200, 20, g)
+  x =40
+  y=height/2
+  for i=1,20 do
+    -- // half of the butterflies only randomize places in which there
+    while board:hasCollisionRange(x,y,SPEED*10,400) do
+      x = x+SPEED
+    end
+    x = math.random(x ,x+SPEED*10)
+    -- y = math.random(height/2,2*height/3)
+    y = math.random(3*height/4,2*height/3)
+    collidableObjects[#collidableObjects + 1] = Butterfly(x,y,g,player)
+    x= x+SPEED*10
+  end
+
+  for j=1,10 do
+    x = math.random(1 ,width*20)
+    y = math.random(1,3*height/4)
+    collidableObjects[#collidableObjects + 1] = Butterfly(x,y,g,player)
+  end
   coins = {}
   for i=1,NUM_COINS do
     coins[i] = Coin()
   end
 end
+
 
 function run()
   graphicsSetting()
@@ -113,32 +128,16 @@ function love.update(dt)
     player:handleCollision(coins[i])
     gotCoin = coins[i]:handleCollision(player)
   end
-
-
-  -- for j=1,NUM_COINS do
-  --   coins[j]:update(dt)
-  --   -- if coins[j]:collides(player) then
-  --   -- if coins[j].x == player.x then
-  --     -- print(coins[j])
-  --     -- table.remove(coins,j)
-  --   -- end
-  -- end
-
-  -- for j,coin in pairs(coins) do
-  -- for j=1,NUM_COINS do
-    -- coins[j]:update(dt)
-    -- print(coins[j])
-    -- if coins[j]:collides(player) then
-      -- print(coins[j])
-      -- table.remove(coins,j)
-    -- end
-  -- end
   keypressed = {}
+  if not player.isAlive then
+    love.event.quit()
+  end
 end
 
 
 function love.draw()
-  love.graphics.draw(sky, -skyScroll, 0)
+  love.graphics.draw(sky, -skyScroll, 0,0,0.255)
+  -- love.graphics.translate(-math.floor(screenScroll), 0)
   board:render()
   for i=1,#collidableObjects do
     collidableObjects[i]:render()
