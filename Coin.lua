@@ -1,7 +1,7 @@
 Coin = Class{}
 local coinImg = love.graphics.newImage('images/leaf.png')
+local sounds = {['coinTaking'] = love.audio.newSource('sounds/leaf.wav', 'static')}
 -- local coinScroll = 0
-
 
 Coin = {}
 Coin.__index = Coin
@@ -22,14 +22,18 @@ function Coin:init()
 end
 
 function Coin:handleCollision(solidObj)
-  if self:checkCollision(solidObj) then
-    if solidObj.collisionType == collisionType.PLAYER then
-      self.img = nil
-      self.isVisible = false
-    end
-    -- return false
+  if self.isVisible  then
+    if self:checkCollision(solidObj) then
+      if solidObj.collisionType == collisionType.PLAYER then
+        sounds['coinTaking']:play()
+        self.img = nil
+        self.isVisible = false
+        return 1
+      end
     end
   end
+  return 0
+end
 
 --
 -- function Coin:collides(player)

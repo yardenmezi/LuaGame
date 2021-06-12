@@ -15,16 +15,16 @@ setmetatable(Butterfly, {
 function Butterfly:init(x, y,g,player)
   Still.init(self,x,y,60,60,butterflyImg)
   self.player = player
-  self.numOfSteps = -3
+  self.numOfSteps = -15
 end
 
 function Butterfly:update(dt)
   if self:checkCollision(player) then
     if self.player:hasMadeNoise() then
-      self.numOfSteps = 3
+      self.numOfSteps = 15
     end
   end
-  if self.numOfSteps > -3 then
+  if self.numOfSteps > -15 then
     if self.numOfSteps > 0 then
       self.y = self.y - 15
     else

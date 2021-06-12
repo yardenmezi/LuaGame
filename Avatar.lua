@@ -2,7 +2,8 @@
 require "Figure"
 Avatar = Class{}
 local giraffe = love.graphics.newImage('images/giraffe.png')
-local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
+local sounds = {['bark'] = love.audio.newSource('sounds/bark.wav', 'static'),
+['jump'] = love.audio.newSource('sounds/woop.wav', 'static')}
 onGround  = false
 
 Avatar = {}
@@ -29,8 +30,11 @@ function Avatar:init(board,x, y,g)
 end
 
 function Avatar:makeNoise()
-  sounds['bark']:play()
-  self.madeNoise = true
+  if self.board:takePower() then
+    sounds['bark']:play()
+    self.madeNoise = true
+  end
+
 end
 
 function Avatar:hasMadeNoise()
@@ -45,6 +49,7 @@ function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
   self.madeNoise = false
   if keypressed == "space" then
+    sounds['jump']:play()
     return ACTION.UP
   elseif love.keyboard.isDown("right") then
     return ACTION.RIGHT
@@ -66,12 +71,14 @@ function Avatar:handleScrolling()
     self.scrolling = self.x- rightLim
     self.x = rightLim
   elseif self.x <leftLim then
-    if not board:inBoardLimit(self.x-leftLim) then
-      self.scrolling =  self.x-leftLim
-    end
+    self.scrolling =  self.x-leftLim
     self.x = leftLim
-
+    -- if not board:inBoardLimit(self.x-leftLim) then
+    -- end
   else
+    self.scrolling = 0
+  end
+  if board:inBoardLimit(self.scrolling) then
     self.scrolling = 0
   end
 end

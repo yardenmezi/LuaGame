@@ -2,7 +2,7 @@
 require "Figure"
 Enemy = Class{}
 
-local enemyPic = love.graphics.newImage('goast.png')
+local enemyPic = love.graphics.newImage('images/goast.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
@@ -17,8 +17,8 @@ setmetatable(Enemy, {
   end,
 })
 
-function Enemy:init(x, y,g,img)
-  Figure.init(self,x,y,g,img or enemyPic)
+function Enemy:init(board,x, y,g,img)
+  Figure.init(self,board,x,y,g,img or enemyPic)
   self.gravityForce = 0.1 * g
   self.collisionType = collisionType.HARM
 end

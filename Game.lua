@@ -19,10 +19,12 @@ local NUM_COINS = 20
 local NUM_PUDDLES = 20
 keypressed = {}
 ------ Game Definitions ------
+-- local coinsTaken = 0
+coinsTaken = 0
 local sky = love.graphics.newImage('images/clouds.png')
 -- local ground = love.graphics.newImage('grass.png')
 love.window.setTitle('Grass And Sun ☼')
-sounds = {['wall_hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
+sounds = {['music'] = love.audio.newSource('sounds/backround_music.mp3', 'static')}
 screenScroll = 0
 
 function graphicsSetting()
@@ -50,8 +52,8 @@ function setObjects()
   print(#collidableObjects)
   -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
   collidableObjects[#collidableObjects + 1] = Bird(board,700,100,g)
-  -- startX = 40
-  puddlesPlacement(collidableObjects)
+  startX = 40
+  -- puddlesPlacement(collidableObjects)
   player = Avatar(board,200, 20, g)
   x =40
   y=height/2
@@ -82,6 +84,8 @@ end
 function run()
   graphicsSetting()
   setObjects()
+  coinsTaken = 0
+  sounds['music']:play()
 end
 
 
@@ -101,6 +105,7 @@ function love.update(dt)
   end
   for i=1,NUM_COINS do
     coins[i]:update(dt)
+
   end
   skyScroll = (skyScroll + 0.1) % BACKGROUND_LOOPING_POINT
   -- screenScroll = screenScroll + player:getScrolling()
@@ -109,16 +114,16 @@ function love.update(dt)
     player:handleCollision(collidableObjects[i])
     collidableObjects[i]:handleCollision(player)
   end
-  -- TODO: SHOULD HANDLE ALL Collidable OBJECTS COLLISIONS WITH EACH OTHER.
-  -- TODO: problem is- the wall and the paddle are always colliding and etc, and paddles with each others..
-  for k=1,#collidableObjects do
-    for j=1,#collidableObjects do
-      if j ~= k  then
-        collidableObjects[k]:handleCollision(collidableObjects[j])
-        -- collidableObjects[j]:handleCollision(collidableObjects[k])
-      end
-    end
-  end
+  -- -- TODO: SHOULD HANDLE ALL Collidable OBJECTS COLLISIONS WITH EACH OTHER.
+  -- -- TODO: problem is- the wall and the paddle are always colliding and etc, and paddles with each others..
+  -- for k=1,#collidableObjects do
+  --   for j=1,#collidableObjects do
+  --     if j ~= k  then
+  --       collidableObjects[k]:handleCollision(collidableObjects[j])
+  --       -- collidableObjects[j]:handleCollision(collidableObjects[k])
+  --     end
+  --   end
+  -- end
 
 -- since during an iteration you can win only one coin, we can break the loop
 -- gotCoin = false
@@ -127,6 +132,7 @@ function love.update(dt)
   for i=1,NUM_COINS do
     player:handleCollision(coins[i])
     gotCoin = coins[i]:handleCollision(player)
+    coinsTaken = coinsTaken + gotCoin
   end
   keypressed = {}
   if not player.isAlive then
@@ -137,6 +143,7 @@ end
 
 function love.draw()
   love.graphics.draw(sky, -skyScroll, 0,0,0.255)
+  -- TODO: change
   -- love.graphics.translate(-math.floor(screenScroll), 0)
   board:render()
   for i=1,#collidableObjects do

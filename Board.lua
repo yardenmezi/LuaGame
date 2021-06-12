@@ -109,6 +109,16 @@ function Board:hasCollision(posX,posY)
   end
 end
 
+function Board:takePower()
+  if coinsTaken > 0 then
+    coinsTaken = coinsTaken - 1
+    return true
+  end
+  return false
+
+end
+
+
 function Board:render()
   scale_x = TILE_WIDTH/grassImg:getWidth()
   scale_y = TILE_HEIGHT/grassImg:getHeight()
