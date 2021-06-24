@@ -1,6 +1,8 @@
+-- TODO: delete requirement and change the place of changing state (to avatar)
+require 'StateMachine'
 Board = {}
 local grassImg = love.graphics.newImage('images/GreenGrass.png')
-local coinImg = love.graphics.newImage('images/leaf.png')
+local wormImg = love.graphics.newImage('images/worm.png')
 
 Board.__index = Board
 setmetatable(Board, {
@@ -10,12 +12,12 @@ setmetatable(Board, {
     return self
   end,
 })
-
-local cell = {SKY=0,GROUND=1,LEAF=2}
+-- TODO: BUG: THE LIMIT WHEN GOING INTO A WALL (THERE IS A GAP THAT USER CANT REACH)
+local cell = {SKY=0,GROUND=1,WORM=2}
 local TILE_WIDTH = 20
 local TILE_HEIGHT = 20
 local TILES_PER_ROW = 1050
-local TILES_PER_COL = 40
+-- local TILES_PER_COL = 40
 local exists = false
 -- TODO: SINGLETONE IT!
 -- function setBoard()
@@ -27,23 +29,25 @@ local exists = false
 -- end
 
 function Board:init(boardWidth,boardHeight)
-  map = {}
-  TILES_PER_COL = boardHeight/TILE_HEIGHT
+  self.tilesPerCol = boardHeight/TILE_HEIGHT
+  -- TILES_PER_ROW = boardWidth/TILE_WIDTH
   randomPairs = {}
   xbegin = 1
   xend = math.ceil(SPEED*3/TILE_WIDTH)
+  -- build the game board.
   for i=1,100 do
     randomPairs[i] = {}
     randomPairs[i]['x'] = math.random(xbegin, xend)
     randomPairs[i]['sizex'] = math.random(5,15)
-    randomPairs[i]['y'] = math.random(TILES_PER_COL*4/5,TILES_PER_COL)
+    randomPairs[i]['y'] = math.random(self.tilesPerCol*4/5,self.tilesPerCol)
     randomPairs[i]['sizey'] = math.random(1,3)
     xbegin = xend+randomPairs[i]['sizex']
     xend = math.min(xbegin+math.ceil(SPEED*15/TILE_WIDTH), TILES_PER_ROW-20)
   end
+  map = {}
   for i=1,TILES_PER_ROW do
     map[i] = {}
-    for j=1,TILES_PER_COL do
+    for j=1,self.tilesPerCol do
         map[i][j] = cell.SKY
       for pairNum=1,100 do
         if i>=randomPairs[pairNum]['x'] and i<=randomPairs[pairNum]['x']+randomPairs[pairNum]['sizex'] then
@@ -54,8 +58,7 @@ function Board:init(boardWidth,boardHeight)
       end
     end
   end
-
-  -- map[10][10] = cell.LEAF
+  map[20][22] = cell.WORM
   self.map = map
   self.tilesGap = 0
 end
@@ -82,14 +85,12 @@ function Board:hasCollisionRange(posX,posY,sizeX,sizeY)
     for j=firstCol,lastCol do
       if self.map[i+self.tilesGap][j] == cell.GROUND then
         return true
+      elseif self.map[i+self.tilesGap][j] == cell.WORM then
+        stateMachine:change('start')
       end
     end
   end
   return false
-    -- return true
-  -- else
-
-  -- end
 end
 
 
@@ -100,14 +101,16 @@ function Board:inBoardLimit(scrolling)
   return false
 end
 
-function Board:hasCollision(posX,posY)
 
-  if self.map[math.ceil(posX/TILE_WIDTH) + self.tilesGap][math.ceil(posY/TILE_HEIGHT)] == cell.GROUND then
-    return true
-  else
-    return false
-  end
-end
+-- function Board:hasCollision(posX,posY)
+--
+--   if self.map[math.ceil(posX/TILE_WIDTH) + self.tilesGap][math.ceil(posY/TILE_HEIGHT)] == cell.GROUND then
+--     return true
+--   else
+--     return false
+--   end
+-- end
+
 
 function Board:takePower()
   if coinsTaken > 0 then
@@ -126,12 +129,12 @@ function Board:render()
   -- screenTilesmath.ceil(screenScroll/TILE_WIDTH)
   -- k = 1
   for i=1+self.tilesGap,tilesPerScreen+self.tilesGap do
-    for j=1,TILES_PER_COL do
+    for j=1,self.tilesPerCol do
       if map[i][j] == cell.GROUND then
         -- love.graphics.draw(grassImg, (i-1)*TILE_WIDTH, (j-1)*TILE_HEIGHT,0, 0.1,0.1)
         love.graphics.draw(grassImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x, scale_y)
-      elseif map[i][j] == cell.LEAF then
-        love.graphics.draw(coinImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x, scale_y)
+      elseif map[i][j] == cell.WORM then
+        love.graphics.draw(wormImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x*5, scale_y/2)
       end
     end
   end

@@ -63,7 +63,6 @@ function Collidable:checkCollision(solidObj)
 end
 
 function Collidable:handleCollision(solidObj)
-
   if self:checkCollision(solidObj) then
     if solidObj.collisionType == collisionType.BLOCK then
       return self:handleBlockCollision(solidObj)

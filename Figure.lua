@@ -1,10 +1,13 @@
 --[[------------------------------------------
 
 ----------------------------------------------]]
-
 require 'Collidable'
+require 'Animation'
 -- Figure = Class{}
 -- TODO: HANDLE THE LOCAL!!!! IN Figure = {}
+ACTION = {DOWN=1, UP=2, LEFT=3, RIGHT=4, NO_MOVE=5}
+defImg = love.graphics.newImage('img.png')
+
 Figure = {}
 Figure.__index = Figure
 setmetatable(Figure, {
@@ -15,32 +18,30 @@ setmetatable(Figure, {
     return self
   end,
 })
--- scaleX = 0.1
--- scaleY = 0.1
-ACTION = {DOWN=1, UP=2, LEFT=3, RIGHT=4, NO_MOVE=5}
-defImg = love.graphics.newImage('img.png')
-
--- ACTION = {[DOWN]='S',UP='W',LEFT='A',RIGHT='D',NO_MOVE=' '}
 
 -- $$$$$$TODO: TODO : get the number of actions!!
--- print(#ACTION)
--- print(ACTION.UP)
 
 -- TODO: check if when I update the x it update also the Collidable
-function Figure:init(board,x, y, g, img, sizeX,sizeY)
+function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSizeY,speed)
   self.board = board
   self.img = img or defImg
-  sizeX = sizeX or 70
-  sizeY = sizeY or 70
-  self.scaleY = sizeY / self.img:getHeight()
-  self.scaleX = sizeX / self.img:getWidth()
-  Collidable.init(self, x,y,sizeX,sizeY)
+  -- TODO FIX!! MAYBE NOT ALLOW NOT HAVING FRAMES.
+  local frames = frames or {self.img}
+  local sizeX = sizeX or 70
+  local sizeY = sizeY or 70
+  local frameSizeY =  frameSizeY or self.img:getHeight()
+  local frameSizeX =  frameSizeX or self.img:getWidth()
+  self.scaleY = sizeY/frameSizeY
+  self.scaleX = sizeX/frameSizeX
+  Collidable.init(self, x, y, sizeX,sizeY)
   self.dx = 0
   self.dy = 0
   self.gravityForce = 0
   self.scrolling = 0
-  self.speed = SPEED
+  self.speed = speed or SPEED
   self.onGround = false
+  self.inMotion = false
+  self.mothionAnim = Animation(frames, 0.05)
 end
 
 
@@ -56,20 +57,39 @@ function Figure:setHeight(newY)
     self.y = newY
     self.onGround = false
   end
-
-
 end
 
 function Figure:move()
   action = self:getAction()
   if action == ACTION.UP and self.onGround ==true then
     self.dy = -self.speed * 6
+    self.inMotion = false
+    -- TODO: FIX DOWN!
   elseif action == ACTION.DOWN then
     self.dy = self.speed
+    self.inMotion = false
   elseif action == ACTION.LEFT then
+    if self.scaleX < 0 then
+      self.scaleX = -self.scaleX
+      -- offset.
+      -- self.x = self.x - self.sizeX
+    else
       self.dx = -self.speed
+
+    end
+    self.inMotion = true
   elseif action == ACTION.RIGHT then
+    self.inMotion = true
+
+    if self.scaleX > 0 then
+      self.scaleX = -self.scaleX
+      -- offset (can't be done in drawing because of collision checking.)
+      -- self.x = self.x + self.sizeX
+    else
       self.dx = self.speed
+    end
+  else
+    self.inMotion = false
   end
   self:setHeight(self.y + self.dy)
   self:handleGravity()
@@ -107,7 +127,7 @@ function Collidable:handleRegCollision(solidObj)
     self.onGround = true
   -- handle the case if Figure is below object
   elseif self.y  > solidObj.y + solidObj.sizeY then
-    self:setHeight(solidObj.y + solidObj.sizeY)
+    -- self:setHeight(solidObj.y + solidObj.sizeY)
   elseif self.x + self.sizeX  > solidObj.x + solidObj.sizeX then
     self.x = solidObj.x + solidObj.sizeX
   else
@@ -125,11 +145,30 @@ end
 
 function Figure:update(dt)
   self:move()
+  if self.inMotion then
+    self.mothionAnim:update(dt)
+  end
+
 end
 
 
 function Figure:render()
-  love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
+  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY,self.sizeX,0)
+  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, -self.scaleX, self.scaleY)
+  if self.scaleX<0 then
+    love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x+self.sizeX, self.y, 0, self.scaleX, self.scaleY)
+    -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, -self.scaleX, self.scaleY)
+  else
+    love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY)
+  end
+
+  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y)
+
+  -- if self.inMotion == false then
+  --   love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
+  -- else
+  --   love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY)
+  -- end
   -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
     -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
 end
