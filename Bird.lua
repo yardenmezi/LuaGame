@@ -76,8 +76,5 @@ function Bird:update(dt)
 end
 
 function Bird:render()
-  -- love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
   love.graphics.draw(birdPic,self.flyingAnim:getFrame(), self.x, self.y,0, self.scaleX,self.scaleY)
-  -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
-    -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
 end

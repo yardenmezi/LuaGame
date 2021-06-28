@@ -41,7 +41,7 @@ function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSize
   self.speed = speed or SPEED
   self.onGround = false
   self.inMotion = false
-  self.mothionAnim = Animation(frames, 0.05)
+  self.mothionAnim = Animation(frames, 0.1)
 end
 
 
@@ -51,7 +51,8 @@ end
 
 function Figure:setHeight(newY)
   -- TODO: RANGE
-  if self.board:hasCollisionRange(self.x, newY,self.sizeX,self.sizeY)  then
+
+  if self.board:hasCollisionRange(self.x, newY,self.sizeX,self.sizeY)[1] == cell.GROUND  then
     self.onGround = true
   else
     self.y = newY
@@ -63,28 +64,22 @@ function Figure:move()
   action = self:getAction()
   if action == ACTION.UP and self.onGround ==true then
     self.dy = -self.speed * 6
-    self.inMotion = false
-    -- TODO: FIX DOWN!
+    self.inMotion = true
   elseif action == ACTION.DOWN then
+    -- TODO: FIX DOWN!
     self.dy = self.speed
     self.inMotion = false
   elseif action == ACTION.LEFT then
     if self.scaleX < 0 then
       self.scaleX = -self.scaleX
-      -- offset.
-      -- self.x = self.x - self.sizeX
     else
       self.dx = -self.speed
-
     end
     self.inMotion = true
   elseif action == ACTION.RIGHT then
     self.inMotion = true
-
     if self.scaleX > 0 then
       self.scaleX = -self.scaleX
-      -- offset (can't be done in drawing because of collision checking.)
-      -- self.x = self.x + self.sizeX
     else
       self.dx = self.speed
     end
@@ -104,7 +99,7 @@ function Figure:move()
   --   tmpX = tmpX + self.sizeX
   -- end
   -- if not self.board:hasCollision(tmpX, self.y) and not self.board:hasCollision(tmpX, self.y+self.sizeY)  then
-  if not self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY) then
+  if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~=cell.GROUND then
     self.x = self.x + self.dx
   end
   self.dx = 0

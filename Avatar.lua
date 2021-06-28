@@ -3,7 +3,7 @@ require "Figure"
 Avatar = Class{}
 local giraffe = love.graphics.newImage('images/gifisprite.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/bark.wav', 'static'),
-['jump'] = love.audio.newSource('sounds/woop.wav', 'static')}
+['jump'] = love.audio.newSource('sounds/woop.wav', 'static'), ['eat'] = love.audio.newSource('sounds/leaf.wav', 'static')}
 onGround  = false
 
 Avatar = {}
@@ -32,16 +32,19 @@ function Avatar:init(board,x, y,g)
     self.collisionType = collisionType.PLAYER
     self.madeNoise = false
     self.isAlive = true
+    self.score = 0
+
     -- self.walking = Animation(frames,0.2)
 
 end
 
 function Avatar:makeNoise()
-  if self.board:takePower() then
+  if self.score >0 then
+    -- self.board:takePower()
     sounds['bark']:play()
     self.madeNoise = true
+    self.score = self.score -1
   end
-
 end
 
 function Avatar:hasMadeNoise()
@@ -70,9 +73,6 @@ function Avatar:getAction()
   if keypressed == "q" then
     self:makeNoise()
   end
-  -- if love.keyboard.isDown("w") then
-  --   self:makeNoise()
-  -- end
 end
 
 function Avatar:handleScrolling()
@@ -95,17 +95,31 @@ function Avatar:handleScrolling()
   end
 end
 
-
 function Avatar:update(dt)
   -- self:move()
   -- self.walking:update(dt)
+  -- super:
   Figure.update(self,dt)
   self:handleScrolling()
   -- TODO: HANDLE other actions
-  if self.y > height then
+  -- TODO: CHANGE TO changeble val
+  if self.y > 515 then
     self.isAlive = false
+  else
+    colType = board:hasCollisionRange(self.x,self.y,self.sizeX,self.sizeY)
+    if colType[1] == cell.WORM then
+      -- TODO: CHANGE TO WON STATE/GAME OVER STATE
+      stateMachine:change('first')
+    elseif colType[1] == cell.LEAF then
+      self.score = self.score + self.board:remove(colType)
+      sounds['eat']:play()
+    end
+
+    -- stateMachine.change('game')
   end
 end
+
+
 function Avatar:isAlive()
   return self.isAlive
 end

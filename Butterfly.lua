@@ -35,7 +35,7 @@ end
 
 function Butterfly:update(dt)
   self.flyingAnim:update(dt)
-  if self:checkCollision(player) then
+  if self:checkCollision(self.player) then
     if self.player:hasMadeNoise() then
       self.numOfSteps = 15
     end

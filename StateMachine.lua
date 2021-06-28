@@ -19,7 +19,6 @@ function StateMachine:init(states)
 end
 
 function StateMachine:change(stateName)
-
   self.curState:stop()
   self.curState = self.states[stateName]()
   -- print(self.curState)

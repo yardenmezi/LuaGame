@@ -1,8 +1,10 @@
 -- TODO: delete requirement and change the place of changing state (to avatar)
 require 'StateMachine'
+require "Grid"
 Board = {}
 local grassImg = love.graphics.newImage('images/GreenGrass.png')
 local wormImg = love.graphics.newImage('images/worm.png')
+local coinImg = love.graphics.newImage('images/leaf.png')
 
 Board.__index = Board
 setmetatable(Board, {
@@ -13,7 +15,7 @@ setmetatable(Board, {
   end,
 })
 -- TODO: BUG: THE LIMIT WHEN GOING INTO A WALL (THERE IS A GAP THAT USER CANT REACH)
-local cell = {SKY=0,GROUND=1,WORM=2}
+cell = {SKY=0,GROUND=1,WORM=2,LEAF=3}
 local TILE_WIDTH = 20
 local TILE_HEIGHT = 20
 local TILES_PER_ROW = 1050
@@ -27,10 +29,7 @@ local exists = false
 --     return Board(40,40)
 --   end
 -- end
-
-function Board:init(boardWidth,boardHeight)
-  self.tilesPerCol = boardHeight/TILE_HEIGHT
-  -- TILES_PER_ROW = boardWidth/TILE_WIDTH
+function Board:createLvl()
   randomPairs = {}
   xbegin = 1
   xend = math.ceil(SPEED*3/TILE_WIDTH)
@@ -58,9 +57,35 @@ function Board:init(boardWidth,boardHeight)
       end
     end
   end
-  map[20][22] = cell.WORM
-  self.map = map
+  map[995][22] = cell.WORM
+  return map
+end
+
+function Board:getTileSize()
+  return {TILE_WIDTH,TILE_HEIGHT}
+end
+
+function Board:getBoardSize()
+  return {TILES_PER_ROW,self.tilesPerCol}
+end
+function Board:addRewards()
+  for i=1,100 do
+    local x = math.random(1,900)
+    local y = math.random(1,self.tilesPerCol/2)
+    -- Still.init(self,x,y,60,60,coinImg)
+    self.leavesGrid:insert(x,y)
+    -- self.leavesGrid:insert(20,20)
+  end
+
+  -- self.collisionType = collisionType.PRIZE
+end
+function Board:init(boardWidth,boardHeight)
+  self.tilesPerCol = boardHeight/TILE_HEIGHT
+  -- TILES_PER_ROW = boardWidth/TILE_WIDTH
+  self.map = self:createLvl()
   self.tilesGap = 0
+  self.leavesGrid = Grid(self,3,3,coinImg)
+  self:addRewards()
 end
 
 function Board:update(dt)
@@ -75,22 +100,36 @@ end
 
 function Board:hasCollisionRange(posX,posY,sizeX,sizeY)
   if posX<=0 or posY<=0 then
-    return false
+    -- TODO: SOMETHING MORE COMMUNICATING
+    return {0}
   end
-  firstRow = math.ceil(posX/TILE_WIDTH)
-  lastRow = math.ceil((posX+sizeX)/TILE_WIDTH)
-  firstCol = math.ceil(posY/TILE_HEIGHT)
-  lastCol = math.ceil((posY+sizeY)/TILE_HEIGHT)
+
+  local firstRow = math.ceil(posX/TILE_WIDTH)+self.tilesGap
+  local lastRow = math.ceil((posX+sizeX)/TILE_WIDTH)+self.tilesGap
+  local firstCol = math.ceil(posY/TILE_HEIGHT)
+  local lastCol = math.ceil((posY+sizeY)/TILE_HEIGHT)
+  type = {cell.SKY}
   for i=firstRow,lastRow do
     for j=firstCol,lastCol do
-      if self.map[i+self.tilesGap][j] == cell.GROUND then
-        return true
-      elseif self.map[i+self.tilesGap][j] == cell.WORM then
-        stateMachine:change('start')
+      if self.leavesGrid:checkColInCell(i,j) then
+        type = {cell.LEAF,{i,j}}
+        break
+        -- return cell.LEAF
+      end
+      if self.map[i][j] > 0 then
+        type = {self.map[i][j],{i,j}}
+      -- elseif  then
+      --   return cell.
+      -- elseif self.map[i+self.tilesGap][j] == cell.GROUND then
+      --   return cell.GROUND
+        -- print(cell.WORM)
+        -- TODO: CHANGE IT. BOARD JOB IS TO GIVE INFORMATION. NOT CHANGE STATES FOR COLLISIONS
+        -- stateMachine:change('first')
       end
     end
   end
-  return false
+  return type
+  -- return false
 end
 
 
@@ -121,7 +160,19 @@ function Board:takePower()
 
 end
 
+function Board:getXYFromBoard(cellX,cellY)
+  return {(cellX-1-self.tilesGap)* TILE_WIDTH, (cellY - 1) * TILE_HEIGHT}
+end
 
+function Board:remove(cellType)
+  if cellType[1] == cell.LEAF then
+    -- should get the cellNumber
+    return self.leavesGrid:remove(cellType[2][1],cellType[2][2])
+    -- return self.leavesGrid:remove(self.tilesGap + math.ceil(x/TILE_WIDTH), math.ceil(y/TILE_HEIGHT))
+  else
+    return 0
+  end
+end
 function Board:render()
   scale_x = TILE_WIDTH/grassImg:getWidth()
   scale_y = TILE_HEIGHT/grassImg:getHeight()
@@ -130,10 +181,13 @@ function Board:render()
   -- k = 1
   for i=1+self.tilesGap,tilesPerScreen+self.tilesGap do
     for j=1,self.tilesPerCol do
+      place = self:getXYFromBoard(i,j)
+      self.leavesGrid:renderGridCell(i,j)
       if map[i][j] == cell.GROUND then
         -- love.graphics.draw(grassImg, (i-1)*TILE_WIDTH, (j-1)*TILE_HEIGHT,0, 0.1,0.1)
-        love.graphics.draw(grassImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x, scale_y)
+        love.graphics.draw(grassImg, place[1], place[2],0, scale_x, scale_y)
       elseif map[i][j] == cell.WORM then
+        -- self.boardx
         love.graphics.draw(wormImg, ((i-1-self.tilesGap) * TILE_WIDTH), (j-1)*TILE_HEIGHT,0, scale_x*5, scale_y/2)
       end
     end
