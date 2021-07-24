@@ -18,22 +18,26 @@ setmetatable(Figure, {
     return self
   end,
 })
-
+-- lala = Collidable
+-- print(lala.xyz)
 -- $$$$$$TODO: TODO : get the number of actions!!
 
 -- TODO: check if when I update the x it update also the Collidable
-function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSizeY,speed)
+
+--[[
+  Description: Defines initial fefinitions for an instance of a Figure.
+  Params:
+    - board: (Board instance) the board in which the Figure moves.
+    -
+]]--
+-- function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSizeY,speed)
+ -- img, sizeX,sizeY,frames,frameSizeX,frameSizeY
+function Figure:init(board,x, y, g,imageProperties,speed)
+  Collidable.init(self, x, y, imageProperties.sizeX,imageProperties.sizeY)
   self.board = board
-  self.img = img or defImg
-  -- TODO FIX!! MAYBE NOT ALLOW NOT HAVING FRAMES.
-  local frames = frames or {self.img}
-  local sizeX = sizeX or 70
-  local sizeY = sizeY or 70
-  local frameSizeY =  frameSizeY or self.img:getHeight()
-  local frameSizeX =  frameSizeX or self.img:getWidth()
-  self.scaleY = sizeY/frameSizeY
-  self.scaleX = sizeX/frameSizeX
-  Collidable.init(self, x, y, sizeX,sizeY)
+  self.img = imageProperties.img
+  self.scaleY = imageProperties.sizeY / imageProperties.fsizeY
+  self.scaleX = imageProperties.sizeX / imageProperties.fsizeX
   self.dx = 0
   self.dy = 0
   self.gravityForce = 0
@@ -41,10 +45,13 @@ function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSize
   self.speed = speed or SPEED
   self.onGround = false
   self.inMotion = false
-  self.mothionAnim = Animation(frames, 0.1)
+  self.mothionAnim = Animation(imageProperties.frames, 0.1)
 end
 
 
+--[[
+  Description: Defult action of a general figure.
+]]--
 function Figure:getAction()
   return math.random(1, 5)
 end
@@ -60,6 +67,15 @@ function Figure:setHeight(newY)
   end
 end
 
+function Figure:flipImgUpdate(sign)
+  self.inMotion = true
+  if sign * self.scaleX > 0 then
+    self.scaleX = -self.scaleX
+  else
+    self.dx = sign * self.speed
+  end
+end
+
 function Figure:move()
   action = self:getAction()
   if action == ACTION.UP and self.onGround ==true then
@@ -70,19 +86,9 @@ function Figure:move()
     self.dy = self.speed
     self.inMotion = false
   elseif action == ACTION.LEFT then
-    if self.scaleX < 0 then
-      self.scaleX = -self.scaleX
-    else
-      self.dx = -self.speed
-    end
-    self.inMotion = true
+    self:flipImgUpdate(-1)
   elseif action == ACTION.RIGHT then
-    self.inMotion = true
-    if self.scaleX > 0 then
-      self.scaleX = -self.scaleX
-    else
-      self.dx = self.speed
-    end
+    self:flipImgUpdate(1)
   else
     self.inMotion = false
   end
@@ -99,7 +105,10 @@ function Figure:move()
   --   tmpX = tmpX + self.sizeX
   -- end
   -- if not self.board:hasCollision(tmpX, self.y) and not self.board:hasCollision(tmpX, self.y+self.sizeY)  then
-  if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~=cell.GROUND then
+  -- if scaleX<0 then
+  --   tempX= tempX-self.sizeX
+  -- end
+  if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~= cell.GROUND then
     self.x = self.x + self.dx
   end
   self.dx = 0
@@ -115,7 +124,8 @@ function Figure:handleBlockCollision(solidObj)
   end
 end
 
-function Collidable:handleRegCollision(solidObj)
+
+function Figure:handleRegCollision(solidObj)
   -- handle the case if Figure is above ovject
   if self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y then
     self:setHeight(solidObj.y - self.sizeY)
@@ -130,40 +140,36 @@ function Collidable:handleRegCollision(solidObj)
   end
 end
 
-function Figure:handleGravity()
-  -- self.y = self.y + self.gravityForce
-  -- if not self.board:hasCollision(self.x, self.y+self.gravityForce) then
-    self:setHeight(self.y + self.gravityForce*5)
-  -- end
 
+
+--[[
+  Description: Changing the place of the figure, according to the gravity.
+]]--
+function Figure:handleGravity()
+    self:setHeight(self.y + self.gravityForce*5)
 end
 
+
+--[[
+  Description: updates the place and state of the figure during the game.
+]]--
 function Figure:update(dt)
   self:move()
   if self.inMotion then
     self.mothionAnim:update(dt)
   end
-
 end
 
-
+--[[
+  Description: Drawing figure.
+]]--
 function Figure:render()
-  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY,self.sizeX,0)
-  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, -self.scaleX, self.scaleY)
+  love.graphics.rectangle("fill", self.x,self.y, 20, 10)
+  love.graphics.rectangle("fill", self.x + self.sizeX, self.y + self.sizeY, 20, 10 )
   if self.scaleX<0 then
     love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x+self.sizeX, self.y, 0, self.scaleX, self.scaleY)
-    -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, -self.scaleX, self.scaleY)
   else
-    love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY)
+      -- love.graphics.draw(birdPic,self.flyingAnim:getFrame(), self.x,               self.y,0, self.scaleX,self.scaleY)
+    love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x,  self.y, 0, self.scaleX, self.scaleY)
   end
-
-  -- love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y)
-
-  -- if self.inMotion == false then
-  --   love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
-  -- else
-  --   love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x, self.y, 0, self.scaleX, self.scaleY)
-  -- end
-  -- love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
-    -- love.graphics.rectangle('fill', self.x, self.y, 5, 20)
 end

@@ -1,7 +1,6 @@
 --[[
 Desctription:
 The file represents the Game class.
-
 ]]--
 Game = {}
 Game.__index = Game
@@ -37,17 +36,26 @@ local sky = love.graphics.newImage('images/clouds.png')
 local sounds = {['gameMusic'] = love.audio.newSource('sounds/backround_music.mp3', 'static')}
 
 
+--[[
 
-
+]]--
 function Game:graphicsSetting()
   screenScroll = 0
-  love.graphics.setNewFont(12)
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.setBackgroundColor(0, 0, 0)
+  -- love.graphics.setNewFont(12)
   font = love.graphics.setNewFont(40)
   height = love.graphics.getHeight()
   width = love.graphics.getWidth()
   -- coloredText = love.graphics.newText(font, {{0, 0, 1}, coinsTaken, {0, 0, 1}, " world"})
+end
+
+function Game:setObjects()
+  board = Board(width,height)
+  self.player = Avatar(board,START_POS_X, START_POS_Y, g)
+  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,700,100,g)
+  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,1500,200,g)
+  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,2000,300,g)
+    -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
+  self:setButterflies()
 end
 
 function Game:setButterflies()
@@ -72,37 +80,25 @@ function Game:setButterflies()
   end
 end
 
+--[[
+  Description: Defines the initial settings and fields for a new game.
+]]--
 function Game:init()
   self.collidableObjects = {}
   self.player = nil
   self:graphicsSetting()
   self:setObjects()
   self.gameOverState = nil
-
   sounds['gameMusic']:play()
 end
 
-function Game:setObjects()
-  board = Board(width,height)
-  self.player = Avatar(board,START_POS_X, START_POS_Y, g)
-  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,700,100,g)
-  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,1500,200,g)
-    -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
-  self:setButterflies()
-  -- coins = {}
-  -- for i=1,NUM_COINS do
-  --   coins[i] = Coin()
-  -- end
-end
 
 
--- function love.keypressed( key )
---    if key == "escape" then
---       love.event.quit()
---    end
---    keypressed = key
--- end
 
+--[[
+  Description: The function is responsible for updating the game loop.
+  Params: dt - delta time.
+]]--
 function Game:update(dt)
   -- Updating all collidable objects --
   if not self.player.isAlive then
@@ -120,39 +116,32 @@ function Game:update(dt)
     for i=1,#self.collidableObjects do
       self.collidableObjects[i]:update(dt)
     end
-    -- for i=1,NUM_COINS do
-    --   coins[i]:update(dt)
-    --
-    -- end
+
     skyScroll = (skyScroll + 0.1) % BACKGROUND_LOOPING_POINT
     for i=1,#self.collidableObjects do
       self.player:handleCollision(self.collidableObjects[i])
       self.collidableObjects[i]:handleCollision(self.player)
     end
-
-    -- for i=1,NUM_COINS do
-    --   player:handleCollision(coins[i])
-    --   gotCoin = coins[i]:handleCollision(player)
-    --   self.coinsTaken = self.coinsTaken + gotCoin
-    -- end
   end
-
 end
+
+--[[
+  Description: The function is responsible for stoping the game.
+]]--
 function Game:stop()
   sounds['gameMusic']:stop()
 end
 
+--[[
+  Description: Drawing all the objects game loop.
+]]--
 function Game:render()
   -- TODO: change to love.graphics.translate(-math.floor(screenScroll), 0)
   love.graphics.draw(sky, -skyScroll, 0,0,0.255)
-  -- Render all objects
   board:render()
   for i=1,#self.collidableObjects do
     self.collidableObjects[i]:render()
   end
-  -- for i,coin in pairs(coins) do
-  --   coin: render()
-  -- end
   self.player: render()
   -- TODO: CHANGE TO A GETTER!!
   coloredText = love.graphics.newText(font, {{0, 0, 1}, self.player.score})

@@ -29,6 +29,26 @@ local exists = false
 --     return Board(40,40)
 --   end
 -- end
+
+
+--[[
+  Description: Board constructor.
+  Parms:
+    - boardWidth: the width of the board (in tiles). must be an int
+    - boardHeight: the height of the board (in tiles). must be an int
+]]--
+function Board:init(boardWidth,boardHeight)
+  self.tilesPerCol = boardHeight/TILE_HEIGHT
+  -- TILES_PER_ROW = boardWidth/TILE_WIDTH
+  self.map = self:createLvl()
+  self.tilesGap = 0
+  self.leavesGrid = Grid(self,3,3,coinImg)
+  self:addRewards()
+end
+
+--[[
+  Description: Builds the positions in the scene of level 1.
+]]--
 function Board:createLvl()
   randomPairs = {}
   xbegin = 1
@@ -61,33 +81,39 @@ function Board:createLvl()
   return map
 end
 
+--[[
+  Description: Place the rewards in the board
+]]--
+function Board:addRewards()
+  for i=1,100 do
+    local x = math.random(1,TILES_PER_ROW)
+    local y = math.random(1,self.tilesPerCol/2)
+    self.leavesGrid:insert(x,y)
+  end
+end
+
+
+--[[
+  Description: Tile size getter
+  Returns: A table with the width and height of a tile (pixels).
+]]--
 function Board:getTileSize()
   return {TILE_WIDTH,TILE_HEIGHT}
 end
 
+
+--[[
+  Description: Board size getter
+  Returns: A table with the width and height of the board (in tiles).
+]]--
 function Board:getBoardSize()
   return {TILES_PER_ROW,self.tilesPerCol}
 end
-function Board:addRewards()
-  for i=1,100 do
-    local x = math.random(1,900)
-    local y = math.random(1,self.tilesPerCol/2)
-    -- Still.init(self,x,y,60,60,coinImg)
-    self.leavesGrid:insert(x,y)
-    -- self.leavesGrid:insert(20,20)
-  end
 
-  -- self.collisionType = collisionType.PRIZE
-end
-function Board:init(boardWidth,boardHeight)
-  self.tilesPerCol = boardHeight/TILE_HEIGHT
-  -- TILES_PER_ROW = boardWidth/TILE_WIDTH
-  self.map = self:createLvl()
-  self.tilesGap = 0
-  self.leavesGrid = Grid(self,3,3,coinImg)
-  self:addRewards()
-end
 
+--[[
+  Description: Updates the board states and the viewed part of it in the game.
+]]--
 function Board:update(dt)
   if screenScroll%TILE_WIDTH==0 then
     if screenScroll<0 then
@@ -151,14 +177,14 @@ end
 -- end
 
 
-function Board:takePower()
-  if coinsTaken > 0 then
-    coinsTaken = coinsTaken - 1
-    return true
-  end
-  return false
-
-end
+-- function Board:takePower()
+--   if coinsTaken > 0 then
+--     coinsTaken = coinsTaken - 1
+--     return true
+--   end
+--   return false
+--
+-- end
 
 function Board:getXYFromBoard(cellX,cellY)
   return {(cellX-1-self.tilesGap)* TILE_WIDTH, (cellY - 1) * TILE_HEIGHT}

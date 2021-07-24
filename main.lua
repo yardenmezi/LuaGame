@@ -4,25 +4,15 @@ require 'StateMachine'
 love.window.setTitle('Grass And Sun ☼')
 function love.load()
   keypressed = {}
-  stateMachine = StateMachine{
+  stateMachine = StateMachine {
       ['first'] = function() return StartState() end,
       ['game'] = function() return Game() end
-      -- ['gameOver'] = function() return Game() end
   }
   stateMachine:change('first')
--- state:render()
-  -- run()
-  -- love.graphics.circle('fill',20,20,20)
-  -- TODO: make state machine class
---   gStateMachine = {
---     ['start'] = function() return StartState() end,
---     ['play'] = function() return Game() end
--- }
 end
 
 function love.keypressed(key)
    if key == "escape" then
-     -- stateMachine.change('first')
       love.event.quit()
    end
    keypressed = key

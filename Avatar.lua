@@ -1,7 +1,7 @@
 
 require "Figure"
 Avatar = Class{}
-local giraffe = love.graphics.newImage('images/gifisprite.png')
+local giraffe = love.graphics.newImage('images/gifisprite2.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/bark.wav', 'static'),
 ['jump'] = love.audio.newSource('sounds/woop.wav', 'static'), ['eat'] = love.audio.newSource('sounds/leaf.wav', 'static')}
 onGround  = false
@@ -17,14 +17,14 @@ setmetatable(Avatar, {
   end,
 })
 
-
 local frames = {}
 for i=1,3 do
-  frames[i] = love.graphics.newQuad(444*(i-1), 0,444,giraffe:getHeight(), giraffe:getDimensions())
+  frames[i] = love.graphics.newQuad(425*(i-1), 0,425,giraffe:getHeight(), giraffe:getDimensions())
 end
+local imageProperties ={img=giraffe, sizeX=200,sizeY=80, frames=frames, fsizeX =425, fsizeY=giraffe:getHeight()}
 
 function Avatar:init(board,x, y,g)
-    Figure.init(self,board,x,y,g,giraffe,200,80,frames,444,giraffe:getHeight())
+    Figure.init(self,board,x,y,g,imageProperties)
     self.dx = 0
     self.dy = 0
     self.gravityForce = 0.1 * g

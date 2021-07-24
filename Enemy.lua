@@ -17,12 +17,17 @@ setmetatable(Enemy, {
   end,
 })
 
-function Enemy:init(board,x, y,g,img)
-  Figure.init(self,board,x,y,g,img or enemyPic)
+function Enemy:init(board,x, y,g,img,imageProperties,speed)
+  Figure.init(self,board,x, y, g,img,imageProperties,speed)
   self.gravityForce = 0.1 * g
   self.collisionType = collisionType.HARM
 end
 
+function Enemy:update(dt)
+  Figure.update(self,dt)
+  self.x = self.x - screenScroll
+
+end
 function Enemy:getAction()
   return ACTION.NO_MOVE
 end

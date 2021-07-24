@@ -3,6 +3,7 @@ require "Animation"
 -- Bird = Class{}
 
 local birdPic = love.graphics.newImage('images/bird.png')
+local sounds = {['bark'] = love.audio.newSource('sounds/toodoom.wav', 'static')}
 top_left = love.graphics.newQuad(0, 0,444,444, birdPic:getDimensions())
 --
 -- -- And here is bottom left:
@@ -24,9 +25,12 @@ setmetatable(Bird, {
 
 --
 function Bird:init(board,x, y,g)
-    Enemy.init(self,board,x,y,g,birdPic)
+   -- img, sizeX,sizeY,frames,frameSizeX,frameSizeY
+   --  img, sizeX,sizeY,frames,frameSizeX,frameSizeY
+  local imageProperties={img=birdPic,sizeX=70,sizeY=70,frames={bottom_left,top_left},fsizeX=444,fsizeY=444}
+    Enemy.init(self,board,x, y, g,imageProperties,SPEED/8)
     self.gravityForce = 0
-    self.speed = SPEED/8
+    -- self.speed = SPEED/8
     self.numSteps = 10
     self.stepsToStop = 10
     self.scaleX = self.sizeX/444
@@ -38,25 +42,20 @@ end
 function Bird:handleCollision(solidObj)
   if solidObj.collisionType == collisionType.PLAYER then
     -- print("logging")
-    isCloseX = solidObj.x < self.x + self.sizeX + (2 * self.speed) and solidObj.x > self.x
-    -- print(isCloseX)
-    isCloseX = isCloseX or  solidObj.x + self.sizeX > self.x - (4* self.speed) and solidObj.x < self.x
-    isCloseY = solidObj.y < self.y + self.sizeY + (4 * self.speed) and solidObj.y > self.y
-    if isCloseX and isCloseY  then
-      solidObj:makeNoise()
+    if self:checkCollision(solidObj) then
+    -- isCloseX = solidObj.x < self.x + self.sizeX + (2 * self.speed) and solidObj.x > self.x
+    -- -- print(isCloseX)
+    -- isCloseX = isCloseX or  solidObj.x + self.sizeX > self.x - (4* self.speed) and solidObj.x < self.x
+    -- isCloseY = solidObj.y < self.y + self.sizeY + (4 * self.speed) and solidObj.y > self.y
+    -- if isCloseX and isCloseY  then
+      -- solidObj:makeNoise()
+      sounds['bark']:play()
       solidObj:handleHarmCollision(self)
     end
   end
 end
 
 function Bird:getAction()
-  -- TODO: CHECK WHY CAN'T DO SELF.
-  if self.firstQuad then
-    self.img = top_left
-  else
-    self.img = bottom_left
-  end
-  self.firstQuad = not  self.firstQuad
   return ACTION.LEFT
 
   -- self.numSteps = self.numSteps - 1
@@ -69,12 +68,12 @@ function Bird:getAction()
   --   return ACTION.RIGHT
   -- end
 end
+--
+-- function Bird:update(dt)
+--   self:move()
+--   self.flyingAnim:update(dt)
+-- end
 
-function Bird:update(dt)
-  self:move()
-  self.flyingAnim:update(dt)
-end
-
-function Bird:render()
-  love.graphics.draw(birdPic,self.flyingAnim:getFrame(), self.x, self.y,0, self.scaleX,self.scaleY)
-end
+-- function Bird:render()
+--   love.graphics.draw(birdPic,self.flyingAnim:getFrame(), self.x, self.y,0, self.scaleX,self.scaleY)
+-- end

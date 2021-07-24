@@ -23,14 +23,17 @@ local puddleImg = love.graphics.newImage('images/tree.png')
 --   Collidable.init(self, self.x,self.y,self.size,10)
 -- end
 
-function Still:init(x,y,sizeX,sizeY,img)
+function Still:init(x,y,sizeX,sizeY,img,width)
 
   self.img = img or puddleImg
   -- TODO: MAGIC NUMBER
   -- y = y or 420
-  self.scaleX = sizeX / self.img:getWidth()
+  -- width = width or self.img:getWidth()
+  self.scaleX = sizeX / width
   self.scaleY = sizeY / self.img:getHeight()
-  Collidable.init(self, x,y, sizeX, sizeY)
+  -- TODO: HAVE COLLIDE X DIFFERS THEN THE REAL X AND Y.
+  Collidable.init(self, x,y, sizeX, sizeY,{{0,0},{0,0}})
+
   self.isVisible = true
 end
 --
@@ -42,8 +45,8 @@ function Still:update(dt)
     self.x = self.x - screenScroll
 end
 
-function Still:handleCollision(solidObj)
-end
+-- function Still:handleCollision(solidObj)
+-- end
 
 
 function Still:render()
