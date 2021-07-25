@@ -17,9 +17,8 @@ setmetatable(Enemy, {
   end,
 })
 
-function Enemy:init(board,x, y,g,img,imageProperties,speed)
-  Figure.init(self,board,x, y, g,img,imageProperties,speed)
-  self.gravityForce = 0.1 * g
+function Enemy:init(board,x, y,g,imageProperties,speed)
+  Figure.init(self,board,x, y, g,imageProperties, speed)
   self.collisionType = collisionType.HARM
 end
 

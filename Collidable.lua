@@ -15,15 +15,30 @@ function Collidable:init(x,y,sizeX,sizeY,collChanges)
   self.y = y
   self.sizeX = sizeX
   self.sizeY = sizeY
+
   -- self.startPt = {x,y}
   -- self.sizes = {sizeX,sizeY}
   -- collChanges = collChanges or {['l']=0,['r']=0,['u']=0,['b']=0}
-  collChanges = {['l']=0,['r']=0,['u']=0,['b']=0}
-  self.collPt = {['x'] = x+collChanges['l'], ['y']=y+collChanges['u']}
-  self.collsizes = {sizeX-collChanges['l']-collChanges['r'],sizeY-collChanges['u']-sizeY-collChanges['b']}
+  -- self.virtDiff = {['l']=0,['r']=0,['u']=0,['b']=0}
+  self.virtPosDiff = {x=0,y=0}
+  self.virtSizeDiff = {x=0,y=0}
+  -- self.virSize = {sizeX,sizeY}
+  -- self.virPt= {x,y}
+  -- self.collPt = {['x'] = x+collChanges['l'], ['y']=y+collChanges['u']}
+  -- self.collsizes = {sizeX-collChanges['l']-collChanges['r'],sizeY-collChanges['u']-sizeY-collChanges['b']}
+  -- self.colLim = {x,}
   -- self.collGaps = {['upperL'] = {x,y}, ['bottomR'] = {x+sizeX,y+sizeY}}
   -- self.collPts = colSizes or  {['upperL'] = {x,y}, ['bottomR'] = {x+sizeX,y+sizeY}}
   self.collisionType = collisionType.BLOCK
+end
+
+function Collidable:getVirtSize()
+  return {self.sizeX-self.virtSizeDiff[x]-self.virtPosDiff[x], self.sizeY-self.virtSizeDiff[y]-self.virtPosDiff[y]}
+end
+
+function Collidable:getVirtPt()
+  print(self.virtPosDiff[x])
+  return {self.x + self.virtPosDiff[x], self.y + self.virtPosDiff[y]}
 end
 
 function Collidable:update(dt)
@@ -33,6 +48,7 @@ end
 function Collidable:setHeight(newY)
   self.y = newY
 end
+
 function Collidable:handleBlockCollision(solidObj)
   -- self:setHeight(solidObj.y - self.sizeY)
   self:setHeight(solidObj.collPts['upperL'][2] - self.sizeY)
@@ -60,14 +76,18 @@ function Collidable:checkCollision(obj)
   -- objCoords = {''}
   -- local objR = self.collPt['x']
   local selfU,selfL ,selfR ,selfB,objU,objL,objR,objB
-  selfU = self.collPt['y']
-  selfL = self.collPt['x']
-  selfR = self.collPt['x']+ self.collsizes[1]
-  selfB = self.collPt['y']+ self.collsizes[2]
-  objU = obj.collPt['y']
-  objL = obj.collPt['x']
-  objR = obj.collPt['x']+ obj.collsizes[1]
-  objB = obj.collPt['y']+ obj.collsizes[2]
+  -- selfU = self.collPt['y']
+  -- selfL = self.collPt['x']
+  -- selfR = self.collPt['x']+ self.collsizes[1]
+  -- selfB = self.collPt['y']+ self.collsizes[2]
+  -- objU = obj.collPt['y']
+  -- objL = obj.collPt['x']
+  -- objR = obj.collPt['x']+ obj.collsizes[1]
+  -- objB = obj.collPt['y']+ obj.collsizes[2]
+  pt = self:getVirtPt()
+  size = self:getVirtSize()
+  objPt = obj:getVirtPt()
+  objSize = obj:getVirtSize()
   -- Checking left collision
 
   -- Checking collision from right
@@ -78,7 +98,10 @@ function Collidable:checkCollision(obj)
   -- print("logging")
   -- TODO: THINK OF A BETTER WAY TO REPRESENT IT.
   -- if obj.collsizes[1] + self.collsizes[1] > math.max(objR,selfR)-math.min(objL,selfL) then
-  if obj.sizeX + self.sizeX > math.max(self.sizeX + self.x, obj.sizeX + obj.x) - math.min(self.x, obj.x) then
+  -- if obj.sizeX + self.sizeX > math.max(self.sizeX + self.x, obj.sizeX + obj.x) - math.min(self.x, obj.x) then
+  rightBound = math.max(size[0] + pt[0], objSize[0] + objPt[0])
+  leftBound =  math.min(pt[0], objPt[0])
+  if objSize[0 ]+ size[0] >  rightBound-leftBound then
     -- return obj.collsizes[2] + self.collsizes[2] > math.max(objB,selfB) - math.min(selfU, objU)
     return obj.sizeY + self.sizeY > math.max(self.sizeY + self.y, obj.sizeY + obj.y) - math.min(self.y, obj.y)
   else

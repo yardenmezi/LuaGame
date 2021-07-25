@@ -21,7 +21,7 @@ local frames = {}
 for i=1,3 do
   frames[i] = love.graphics.newQuad(425*(i-1), 0,425,giraffe:getHeight(), giraffe:getDimensions())
 end
-local imageProperties ={img=giraffe, sizeX=200,sizeY=80, frames=frames, fsizeX =425, fsizeY=giraffe:getHeight()}
+local imageProperties = {img=giraffe, sizeX=200,sizeY=80, frames=frames, fsizeX =425, fsizeY=giraffe:getHeight()}
 
 function Avatar:init(board,x, y,g)
     Figure.init(self,board,x,y,g,imageProperties)
@@ -37,6 +37,7 @@ function Avatar:init(board,x, y,g)
     -- self.walking = Animation(frames,0.2)
 
 end
+
 
 function Avatar:makeNoise()
   if self.score >0 then
@@ -57,6 +58,10 @@ function Avatar:getScrolling()
   return self.scrolling
 end
 
+
+--[[
+  Description: Handles the actions of the player.
+]]--
 function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
   self.madeNoise = false
@@ -74,6 +79,7 @@ function Avatar:getAction()
     self:makeNoise()
   end
 end
+
 
 function Avatar:handleScrolling()
   -- TODO: MOVE TO MAIN Class?

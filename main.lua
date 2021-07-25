@@ -2,6 +2,10 @@ require 'Game'
 require 'StartState'
 require 'StateMachine'
 love.window.setTitle('Grass And Sun ☼')
+
+--[[
+  
+]]
 function love.load()
   keypressed = {}
   stateMachine = StateMachine {

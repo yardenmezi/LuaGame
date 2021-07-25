@@ -40,7 +40,7 @@ function Figure:init(board,x, y, g,imageProperties,speed)
   self.scaleX = imageProperties.sizeX / imageProperties.fsizeX
   self.dx = 0
   self.dy = 0
-  self.gravityForce = 0
+  self.gravityForce = g
   self.scrolling = 0
   self.speed = speed or SPEED
   self.onGround = false
@@ -58,7 +58,6 @@ end
 
 function Figure:setHeight(newY)
   -- TODO: RANGE
-
   if self.board:hasCollisionRange(self.x, newY,self.sizeX,self.sizeY)[1] == cell.GROUND  then
     self.onGround = true
   else
@@ -159,6 +158,7 @@ function Figure:update(dt)
     self.mothionAnim:update(dt)
   end
 end
+
 
 --[[
   Description: Drawing figure.
