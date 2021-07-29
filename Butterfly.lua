@@ -12,7 +12,7 @@ frames = {}
 for i=1,3 do
   frames[i] = love.graphics.newQuad(butterflyImg:getWidth()/3*(i-1),0,butterflyImg:getWidth()/3,butterflyImg:getHeight(), butterflyImg:getDimensions())
 end
-
+local imageProperties = {img = butterflyImg, sizeX=60,sizeY=60, frames=frames, fsizeX =butterflyImg:getWidth()/3, fsizeY=butterflyImg:getHeight()}
 Butterfly = {}
 Butterfly.__index = Butterfly
 setmetatable(Butterfly, {
@@ -28,13 +28,15 @@ setmetatable(Butterfly, {
   Description:
 ]]--
 function Butterfly:init(x, y,g,player)
-  Still.init(self,x,y,60,60,butterflyImg,butterflyImg:getWidth()/3)
+
+  Still.init(self,x,y,imageProperties)
   -- self.scaleX = 60/99
   self.player = player
   self.numOfSteps = -15
   self.collisionGap =30
   self.flyingAnim = Animation(frames,0.35)
 end
+
 
 function Butterfly:update(dt)
   self.flyingAnim:update(dt)
@@ -64,8 +66,8 @@ end
 function Butterfly:render()
   -- if self.isVisible then
 
-  love.graphics.rectangle("fill", self.x,self.y,10, 10 )
-  love.graphics.rectangle("fill", self.x+self.sizeX,self.y+self.sizeY,10, 10 )
+  -- love.graphics.rectangle("fill", self.x,self.y,10, 10 )
+  -- love.graphics.rectangle("fill", self.x+self.sizeX,self.y+self.sizeY,10, 10 )
   -- todo: change to a better solution
   love.graphics.draw(self.img,self.flyingAnim:getFrame(), self.x, self.y,0, self.scaleX,self.scaleY)
     -- love.graphics.draw(self.img, self.x, self.y - 40, 0, self.scaleX, self.scaleY)

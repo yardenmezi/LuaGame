@@ -32,6 +32,10 @@ function StateMachine:update(dt)
     -- end
 end
 
+-- function StateMachine:updateKeyboard(dt)
+--   keypressed = {}
+-- end
+
 function StateMachine:render()
   self.curState:render()
 end

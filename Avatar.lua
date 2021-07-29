@@ -1,7 +1,8 @@
 
 require "Figure"
 Avatar = Class{}
-local giraffe = love.graphics.newImage('images/gifisprite2.png')
+-- local giraffe = love.graphics.newImage('images/gifisprite2.png')
+local giraffe = love.graphics.newImage('images/tmpGiff.png')
 local sounds = {['bark'] = love.audio.newSource('sounds/bark.wav', 'static'),
 ['jump'] = love.audio.newSource('sounds/woop.wav', 'static'), ['eat'] = love.audio.newSource('sounds/leaf.wav', 'static')}
 onGround  = false
@@ -17,14 +18,19 @@ setmetatable(Avatar, {
   end,
 })
 
+-- local frames = {}
+-- for i=1,3 do
+--   frames[i] = love.graphics.newQuad(425*(i-1), 0,425,giraffe:getHeight(), giraffe:getDimensions())
+-- end
 local frames = {}
-for i=1,3 do
-  frames[i] = love.graphics.newQuad(425*(i-1), 0,425,giraffe:getHeight(), giraffe:getDimensions())
+for i=1,4 do
+  frames[i] = love.graphics.newQuad(giraffe:getWidth()/4*(i-1), 0,giraffe:getWidth()/4,giraffe:getHeight(), giraffe:getDimensions())
 end
-local imageProperties = {img=giraffe, sizeX=200,sizeY=80, frames=frames, fsizeX =425, fsizeY=giraffe:getHeight()}
+-- local imageProperties = {img=giraffe, sizeX=200,sizeY=80, frames=frames, fsizeX =425, fsizeY=giraffe:getHeight()}
+local imageProperties = {img=giraffe, sizeX=100,sizeY=150, frames=frames, fsizeX =giraffe:getWidth()/4, fsizeY=giraffe:getHeight()}
 
 function Avatar:init(board,x, y,g)
-    Figure.init(self,board,x,y,g,imageProperties)
+    Figure.init(self,board,x,y,g,imageProperties,15)
     self.dx = 0
     self.dy = 0
     self.gravityForce = 0.1 * g
@@ -33,7 +39,8 @@ function Avatar:init(board,x, y,g)
     self.madeNoise = false
     self.isAlive = true
     self.score = 0
-
+    self.timeOnAir = 0.2
+    self.isJumping = true
     -- self.walking = Animation(frames,0.2)
 
 end
@@ -66,9 +73,14 @@ function Avatar:getAction()
   -- TODO: handle the case of off ground (variable onGround)
   self.madeNoise = false
   if keypressed == "w" then
-    sounds['jump']:play()
+    if self.timeOnAir==0.2 then
+      sounds['jump']:play()
+      isJumping =true
+      -- self.gravityForce=self.gravityForce/10
+    end
     return ACTION.UP
-  elseif love.keyboard.isDown("right") then
+  end
+  if love.keyboard.isDown("right") then
     return ACTION.RIGHT
   elseif love.keyboard.isDown("left") then
     return ACTION.LEFT
@@ -109,7 +121,7 @@ function Avatar:update(dt)
   self:handleScrolling()
   -- TODO: HANDLE other actions
   -- TODO: CHANGE TO changeble val
-  if self.y > 515 then
+  if self.y > 430 then
     self.isAlive = false
   else
     colType = board:hasCollisionRange(self.x,self.y,self.sizeX,self.sizeY)
@@ -120,6 +132,16 @@ function Avatar:update(dt)
       self.score = self.score + self.board:remove(colType)
       sounds['eat']:play()
     end
+    if self.timeOnAir<=0 then
+      self.timeOnAir=0.2
+      keypressed = {}
+      isJumping =false
+    end
+      -- self.gravityForce = self.gravityForce *10'
+      -- TODO: BOOLEAN VAL
+    if isJumping then
+      self.timeOnAir=self.timeOnAir-dt
+    end
 
     -- stateMachine.change('game')
   end
@@ -129,6 +151,7 @@ end
 function Avatar:isAlive()
   return self.isAlive
 end
+
 
 -- function Avatar:render()
 --   -- love.graphics.draw(birdPic,self.flyingAnim:getFrame(), self.x, self.y,0, self.scaleX,self.scaleY)

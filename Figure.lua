@@ -33,7 +33,8 @@ setmetatable(Figure, {
 -- function Figure:init(board,x, y, g, img, sizeX,sizeY,frames,frameSizeX,frameSizeY,speed)
  -- img, sizeX,sizeY,frames,frameSizeX,frameSizeY
 function Figure:init(board,x, y, g,imageProperties,speed)
-  Collidable.init(self, x, y, imageProperties.sizeX,imageProperties.sizeY)
+  -- TODO: CHANGE THE CHANGE OF POINTS TO ONLY giraffe
+  Collidable.init(self, x, y, imageProperties.sizeX,imageProperties.sizeY,{x=20,y=0},{x=-20,y=-20})
   self.board = board
   self.img = imageProperties.img
   self.scaleY = imageProperties.sizeY / imageProperties.fsizeY
@@ -45,7 +46,9 @@ function Figure:init(board,x, y, g,imageProperties,speed)
   self.speed = speed or SPEED
   self.onGround = false
   self.inMotion = false
-  self.mothionAnim = Animation(imageProperties.frames, 0.1)
+  self.mothionAnim = Animation(imageProperties.frames, 0.05)
+  self.isJumping= false
+  -- print(self.virtSizeDiff)
 end
 
 
@@ -77,10 +80,11 @@ end
 
 function Figure:move()
   action = self:getAction()
-  if action == ACTION.UP and self.onGround ==true then
-    self.dy = -self.speed * 6
+  if (action == ACTION.UP and self.onGround ==true) or isJumping then
+    self.dy = -self.speed
     self.inMotion = true
-  elseif action == ACTION.DOWN then
+  end
+  if action == ACTION.DOWN then
     -- TODO: FIX DOWN!
     self.dy = self.speed
     self.inMotion = false
@@ -88,6 +92,7 @@ function Figure:move()
     self:flipImgUpdate(-1)
   elseif action == ACTION.RIGHT then
     self:flipImgUpdate(1)
+    inMotion =true
   else
     self.inMotion = false
   end
@@ -117,10 +122,12 @@ end
 
 function Figure:handleBlockCollision(solidObj)
   --  if it's above.
-  if self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y then
-    self:setHeight(solidObj.y - self.sizeY)
-    self.onGround = true
-  end
+  Collidable.handleBlockCollision(self,solidObj)
+  -- if self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y then
+    -- self:setHeight(solidObj.y - self.sizeY)
+    -- self.onGround = true
+  -- end
+  self.onGround = true
 end
 
 
@@ -164,8 +171,8 @@ end
   Description: Drawing figure.
 ]]--
 function Figure:render()
-  love.graphics.rectangle("fill", self.x,self.y, 20, 10)
-  love.graphics.rectangle("fill", self.x + self.sizeX, self.y + self.sizeY, 20, 10 )
+  -- love.graphics.rectangle("fill", self.x,self.y, 20, 10)
+  -- love.graphics.rectangle("fill", self.x + self.sizeX, self.y + self.sizeY, 20, 10 )
   if self.scaleX<0 then
     love.graphics.draw(self.img, self.mothionAnim:getFrame(), self.x+self.sizeX, self.y, 0, self.scaleX, self.scaleY)
   else

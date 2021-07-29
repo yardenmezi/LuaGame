@@ -16,7 +16,7 @@ setmetatable(Board, {
 })
 -- TODO: BUG: THE LIMIT WHEN GOING INTO A WALL (THERE IS A GAP THAT USER CANT REACH)
 cell = {SKY=0,GROUND=1,WORM=2,LEAF=3}
-local TILE_WIDTH = 20
+local TILE_WIDTH = 15
 local TILE_HEIGHT = 20
 local TILES_PER_ROW = 1050
 -- local TILES_PER_COL = 40
@@ -130,7 +130,7 @@ function Board:hasCollisionRange(posX,posY,sizeX,sizeY)
     return {0}
   end
 
-  local firstRow = math.ceil(posX/TILE_WIDTH)+self.tilesGap
+  local firstRow = math.ceil(posX/TILE_WIDTH) + self.tilesGap
   local lastRow = math.ceil((posX+sizeX)/TILE_WIDTH)+self.tilesGap
   local firstCol = math.ceil(posY/TILE_HEIGHT)
   local lastCol = math.ceil((posY+sizeY)/TILE_HEIGHT)

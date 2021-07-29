@@ -23,37 +23,19 @@ local puddleImg = love.graphics.newImage('images/tree.png')
 --   Collidable.init(self, self.x,self.y,self.size,10)
 -- end
 
-function Still:init(x,y,sizeX,sizeY,img,width)
-
-  self.img = img or puddleImg
-  -- TODO: MAGIC NUMBER
-  -- y = y or 420
-  -- width = width or self.img:getWidth()
-  self.scaleX = sizeX / width
-  self.scaleY = sizeY / self.img:getHeight()
+function Still:init(x, y, imageProperties)
+  self.img = imageProperties.img
+  self.scaleX = imageProperties.sizeX / imageProperties.fsizeX
+  self.scaleY = imageProperties.sizeY / imageProperties.fsizeY
   -- TODO: HAVE COLLIDE X DIFFERS THEN THE REAL X AND Y.
-  Collidable.init(self, x,y, sizeX, sizeY,{{0,0},{0,0}})
-
-  self.isVisible = true
+  Collidable.init(self, x,y, imageProperties.sizeX, imageProperties.sizeY,{x=5,y=14},{x=-4,y=0})
 end
---
--- function Still:getPuddleEnd()
---   return self.x + self.size
--- end
 
 function Still:update(dt)
     self.x = self.x - screenScroll
 end
 
--- function Still:handleCollision(solidObj)
--- end
-
 
 function Still:render()
-  if self.isVisible then
-    love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
-  end
-  -- self.x = self.x - puddleScroll
-  -- love.graphics.draw(puddleImg,self.x , self.y, 0, 0.03, 0.03)
-  -- love.graphics.rectangle('fill', self.x - puddleScroll, self.y, self.size, 20)
+  love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, self.scaleY)
 end

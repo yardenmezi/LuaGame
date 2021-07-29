@@ -53,7 +53,7 @@ function Game:setObjects()
   self.player = Avatar(board,START_POS_X, START_POS_Y, g)
   self.collidableObjects[#self.collidableObjects + 1] = Bird(board,700,100,g)
   self.collidableObjects[#self.collidableObjects + 1] = Bird(board,1500,200,g)
-  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,2000,300,g)
+  self.collidableObjects[#self.collidableObjects + 1] = Bird(board,2500,150,g)
     -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
   self:setButterflies()
 end
@@ -68,14 +68,14 @@ function Game:setButterflies()
     --   x = x+SPEED
     -- end
     x = math.random(x ,x+SPEED*10)
-    y = math.random(3*height/4,2*height/3)
+    y = math.random(3*height/4,2*height/3-200)
     self.collidableObjects[#self.collidableObjects + 1] = Butterfly(x,y,g,self.player)
     x= x + SPEED * 10
   end
 
   for j=1,10 do
     x = math.random(1 ,width*20)
-    y = math.random(1,3*height/4)
+    y = math.random(1,3*height/4-200)
     self.collidableObjects[#self.collidableObjects + 1] = Butterfly(x,y,g,self.player)
   end
 end
@@ -90,9 +90,8 @@ function Game:init()
   self:setObjects()
   self.gameOverState = nil
   sounds['gameMusic']:play()
+  love.graphics.setColor(1,1,1)
 end
-
-
 
 
 --[[

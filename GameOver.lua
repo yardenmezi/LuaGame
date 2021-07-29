@@ -30,13 +30,15 @@ function GameOver:update(hasWon)
 end
 function GameOver:stop(hasWon)
   -- body...
+    keypressed = {}
 end
 function GameOver:render(hasWon)
   -- love.graphics.setBackgroundColor(0, 0,0)
 love.graphics.setColor(0,0,0)
-love.graphics.rectangle("fill", 100, 100, 500, 200 )
-love.graphics.setColor(255,255,255)
 
+love.graphics.rectangle("fill", 100, 100, 500, 200 )
+-- love.graphics.setColor(255,255,255)
+love.graphics.setColor(1,0.5,1)
   -- love.graphics.polygon('fill', 100, 200, 700, 200, 100, 400,700,400, 100, 400)
   -- love.graphics.polygon('fill', 100,200,700,200,100,400,700,400)
   love.graphics.draw(coloredText,200,130)

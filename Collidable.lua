@@ -10,48 +10,50 @@ setmetatable(Collidable, {
   end,
 })
 
-function Collidable:init(x,y,sizeX,sizeY,collChanges)
+function Collidable:init(x,y,sizeX,sizeY,virtPosDiff,virtSizeDiff)
   self.x = x
   self.y = y
   self.sizeX = sizeX
   self.sizeY = sizeY
-
-  -- self.startPt = {x,y}
-  -- self.sizes = {sizeX,sizeY}
-  -- collChanges = collChanges or {['l']=0,['r']=0,['u']=0,['b']=0}
-  -- self.virtDiff = {['l']=0,['r']=0,['u']=0,['b']=0}
-  self.virtPosDiff = {x=0,y=0}
-  self.virtSizeDiff = {x=0,y=0}
-  -- self.virSize = {sizeX,sizeY}
-  -- self.virPt= {x,y}
-  -- self.collPt = {['x'] = x+collChanges['l'], ['y']=y+collChanges['u']}
-  -- self.collsizes = {sizeX-collChanges['l']-collChanges['r'],sizeY-collChanges['u']-sizeY-collChanges['b']}
-  -- self.colLim = {x,}
-  -- self.collGaps = {['upperL'] = {x,y}, ['bottomR'] = {x+sizeX,y+sizeY}}
-  -- self.collPts = colSizes or  {['upperL'] = {x,y}, ['bottomR'] = {x+sizeX,y+sizeY}}
+  self.virtSizeDiff = virtSizeDiff or {x=0, y=0}
+  self.virtPosDiff = virtPosDiff or {x=0, y=0}
   self.collisionType = collisionType.BLOCK
 end
 
+
 function Collidable:getVirtSize()
-  return {self.sizeX-self.virtSizeDiff[x]-self.virtPosDiff[x], self.sizeY-self.virtSizeDiff[y]-self.virtPosDiff[y]}
+  -- // if the size diff is minus, it means the size decreases.
+  --  in addition, we have to dectrease/increase the size according to the position of virtual x
+  --  that is, if x is minus, we have to increase size. else, we should dectrease.
+  return {self.sizeX + self.virtSizeDiff.x - self.virtPosDiff.x, self.sizeY + self.virtSizeDiff.y - self.virtPosDiff.y}
 end
 
 function Collidable:getVirtPt()
-  print(self.virtPosDiff[x])
-  return {self.x + self.virtPosDiff[x], self.y + self.virtPosDiff[y]}
+  return {self.x + self.virtPosDiff.x, self.y + self.virtPosDiff.y}
 end
 
-function Collidable:update(dt)
-end
-
-
+-- function Collidable:update(dt)
+-- end
+--
+-- end
 function Collidable:setHeight(newY)
   self.y = newY
 end
 
-function Collidable:handleBlockCollision(solidObj)
-  -- self:setHeight(solidObj.y - self.sizeY)
-  self:setHeight(solidObj.collPts['upperL'][2] - self.sizeY)
+function Collidable:handleBlockCollision(obj)
+  local Y=2
+  objpt = obj:getVirtPt()
+  -- print(self:lala())
+  size = self:getVirtSize()
+  pt = self:getVirtPt()
+  -- print()
+  -- print(size[2])
+  -- print("---")
+  -- print(pt[Y]+size[Y]-30)
+  -- print(objPt[Y])
+  if pt[Y] + size[Y]-SPEED  < objPt[Y]  then
+    self:setHeight(objpt[Y]-size[Y])
+  end
   --  if it's above.
   -- if self.y + self.sizeY  < solidObj.y then
     -- self.y =
@@ -59,12 +61,15 @@ function Collidable:handleBlockCollision(solidObj)
     -- self.x = solidObj.x - self.sizeX
   -- end
 end
-
-function Collidable:handleRegCollision(solidObj)
-  self.x = self.x- 60
-  -- self.y = self.y- 60
-  self:setHeight(self.y- 60)
-end
+-- TODO: SHOULD CHANGE THE COLLISION OF THE AVATAR WHEN SWITCH SIDES.(SIZE TO PT AND PT TO SIZE)
+-- function Collidable:handleRegCollision(solidObj)
+--   pt = self:getVirtPt()
+--   self.x = pt[1]- 60
+--   -- self.x = self.x- 60
+--   -- self.y = self.y- 60
+--   -- self:setHeight(self.y- 60)
+--   self:setHeight(pt[2]- 60)
+-- end
 
 function Collidable:handleHarmCollision(solidObj)
   self.x = self.x- 60
@@ -73,21 +78,14 @@ function Collidable:handleHarmCollision(solidObj)
 end
 
 function Collidable:checkCollision(obj)
-  -- objCoords = {''}
-  -- local objR = self.collPt['x']
-  local selfU,selfL ,selfR ,selfB,objU,objL,objR,objB
-  -- selfU = self.collPt['y']
-  -- selfL = self.collPt['x']
-  -- selfR = self.collPt['x']+ self.collsizes[1]
-  -- selfB = self.collPt['y']+ self.collsizes[2]
-  -- objU = obj.collPt['y']
-  -- objL = obj.collPt['x']
-  -- objR = obj.collPt['x']+ obj.collsizes[1]
-  -- objB = obj.collPt['y']+ obj.collsizes[2]
+  local X=1
+  local Y=2
+
   pt = self:getVirtPt()
   size = self:getVirtSize()
   objPt = obj:getVirtPt()
   objSize = obj:getVirtSize()
+  -- print(objPt[X])
   -- Checking left collision
 
   -- Checking collision from right
@@ -95,15 +93,12 @@ function Collidable:checkCollision(obj)
   -- Checking collision from up
 
   -- Checking collision from down
-  -- print("logging")
-  -- TODO: THINK OF A BETTER WAY TO REPRESENT IT.
-  -- if obj.collsizes[1] + self.collsizes[1] > math.max(objR,selfR)-math.min(objL,selfL) then
-  -- if obj.sizeX + self.sizeX > math.max(self.sizeX + self.x, obj.sizeX + obj.x) - math.min(self.x, obj.x) then
-  rightBound = math.max(size[0] + pt[0], objSize[0] + objPt[0])
-  leftBound =  math.min(pt[0], objPt[0])
-  if objSize[0 ]+ size[0] >  rightBound-leftBound then
-    -- return obj.collsizes[2] + self.collsizes[2] > math.max(objB,selfB) - math.min(selfU, objU)
-    return obj.sizeY + self.sizeY > math.max(self.sizeY + self.y, obj.sizeY + obj.y) - math.min(self.y, obj.y)
+  rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
+  leftBound =  math.min(pt[X], objPt[X])
+  upperBound =   math.min(pt[Y], objPt[Y])
+  lowerBound = math.max(size[Y] + pt[Y], objSize[Y] + objPt[Y])
+  if objSize[X]+ size[X] > rightBound-leftBound then
+    return objSize[Y] + size[Y] > lowerBound - upperBound
   else
     return false
   end

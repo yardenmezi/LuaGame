@@ -1,10 +1,10 @@
 require 'Game'
 require 'StartState'
 require 'StateMachine'
-love.window.setTitle('Grass And Sun ☼')
+love.window.setTitle('Grass And Sun Game')
 
 --[[
-  
+
 ]]
 function love.load()
   keypressed = {}
@@ -24,7 +24,7 @@ end
 
 function love.update(dt)
   stateMachine:update(dt)
-  keypressed = {}
+  -- stateMachine:updateKeyboard(dt)
 end
 
 function love.draw()
