@@ -1,7 +1,3 @@
---[[
-Desctription:
-The file represents the Game class.
-]]--
 Game = {}
 Game.__index = Game
 setmetatable(Game, {
@@ -13,14 +9,15 @@ setmetatable(Game, {
 })
 ------ Imports ------
 Class = require 'class'
-require 'Avatar'
-require 'Still'
-require 'Bird'
+require 'States/Game/Figures/Avatar'
+require 'States/Game/Figures/Bird'
+require 'States/Game/Figures/Butterfly'
+require 'States/Game/Figures/Worm'
+require "States/Game/ObjectAttributes/Still"
 require 'Board'
-require 'Coin'
-require 'Butterfly'
-require 'Worm'
-require "GameOver"
+
+require "States/GameOver"
+require "Settings"
 ------ Consts ------
 SPEED = 20
 g = 9.8
@@ -32,20 +29,12 @@ local START_POS_X = 200
 local START_POS_Y = 20
 
 ------ Game Definitions ------
-local sky = love.graphics.newImage('images/clouds.png')
-local sounds = {['gameMusic'] = love.audio.newSource('sounds/backround_music.mp3', 'static')}
+local height = love.graphics.getHeight()
+local width = love.graphics.getWidth()
 
-
---[[
-
-]]--
 function Game:graphicsSetting()
   screenScroll = 0
-  -- love.graphics.setNewFont(12)
   font = love.graphics.setNewFont(40)
-  height = love.graphics.getHeight()
-  width = love.graphics.getWidth()
-  -- coloredText = love.graphics.newText(font, {{0, 0, 1}, coinsTaken, {0, 0, 1}, " world"})
 end
 
 function Game:setObjects()
@@ -54,7 +43,6 @@ function Game:setObjects()
   self.collidableObjects[#self.collidableObjects + 1] = Bird(board,700,100,g)
   self.collidableObjects[#self.collidableObjects + 1] = Bird(board,1500,200,g)
   self.collidableObjects[#self.collidableObjects + 1] = Bird(board,2500,150,g)
-    -- collidableObjects[#collidableObjects + 1] = Worm(board,700,100,g)
   self:setButterflies()
 end
 
@@ -63,10 +51,6 @@ function Game:setButterflies()
   x = 40
   y=height/2
   for i=1,20 do
-    -- TODO: CHECK WHAT I MEANT HERE.
-    -- while board:hasCollisionRange(x,y,SPEED*10,400) do
-    --   x = x+SPEED
-    -- end
     x = math.random(x ,x+SPEED*10)
     y = math.random(3*height/4,2*height/3-200)
     self.collidableObjects[#self.collidableObjects + 1] = Butterfly(x,y,g,self.player)
@@ -80,9 +64,7 @@ function Game:setButterflies()
   end
 end
 
---[[
-  Description: Defines the initial settings and fields for a new game.
-]]--
+
 function Game:init()
   self.collidableObjects = {}
   self.player = nil
@@ -94,13 +76,9 @@ function Game:init()
 end
 
 
---[[
-  Description: The function is responsible for updating the game loop.
-  Params: dt - delta time.
-]]--
 function Game:update(dt)
   -- Updating all collidable objects --
-  if not self.player.isAlive then
+  if not self.player:checkAlive() then
     if self.gameOverState == nil then
       self:stop()
       self.gameOverState = GameOver()
@@ -110,8 +88,8 @@ function Game:update(dt)
     -- love.event.quit()
   else
     self.player:update(dt)
-    screenScroll = self.player:getScrolling()
     board:update(dt)
+    screenScroll = self.player:getScrolling()
     for i=1,#self.collidableObjects do
       self.collidableObjects[i]:update(dt)
     end
@@ -124,25 +102,21 @@ function Game:update(dt)
   end
 end
 
---[[
-  Description: The function is responsible for stoping the game.
-]]--
+
 function Game:stop()
   sounds['gameMusic']:stop()
 end
 
---[[
-  Description: Drawing all the objects game loop.
-]]--
+
+
 function Game:render()
-  -- TODO: change to love.graphics.translate(-math.floor(screenScroll), 0)
-  love.graphics.draw(sky, -skyScroll, 0,0,0.255)
+  -- TODO: check how to change it to love.graphics.translate(-math.floor(screenScroll), 0)
+  love.graphics.draw(images['backround'], -skyScroll, 0,0,0.255)
   board:render()
   for i=1,#self.collidableObjects do
     self.collidableObjects[i]:render()
   end
   self.player: render()
-  -- TODO: CHANGE TO A GETTER!!
   coloredText = love.graphics.newText(font, {{0, 0, 1}, self.player.score})
   love.graphics.draw(coloredText,0,height-40)
   if self.gameOverState then

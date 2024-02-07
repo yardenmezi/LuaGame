@@ -1,5 +1,7 @@
+-- require "States/Game/Models/Size"
 Animation  = {}
 Animation.__index = Animation
+-- TODO: can it be used in class with no duplication?
 setmetatable(Animation, {
   __index = Animation,
   __call = function (cls, ...)
@@ -9,12 +11,19 @@ setmetatable(Animation, {
   end,
 })
 
-
 function Animation:init(frames,timePerFrame)
   self.frames = frames
   self.timePerFrame = timePerFrame
   self.frameDuration = 0
   self.curFrameNum = 0
+end
+
+function getFramesFromImage(frameSize, image, framesNumber)
+  frames = {}
+  for i=1,framesNumber do
+    frames[i] = love.graphics.newQuad(image:getWidth()/4*(i-1), 0, frameSize.width, frameSize.height, image:getHeight(), image:getDimensions())
+  end
+  return frames
 end
 
 function Animation:getFrame()

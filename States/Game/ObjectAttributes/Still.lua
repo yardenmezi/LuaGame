@@ -1,5 +1,5 @@
-require "Collidable"
--- Puddle = Class{}
+require 'States/Game/ObjectAttributes/Collidable'
+
 Still = {}
 Still.__index = Still
 setmetatable(Still, {
@@ -12,16 +12,6 @@ setmetatable(Still, {
 })
 
 local puddleImg = love.graphics.newImage('images/tree.png')
-
--- -- TODO:THAT SHOULD BE A FACTORY.
--- function Still:init(x_init)
---   self.x = math.random(x_init + (width/30) , x_init + width/2)
---   -- TODO:change value!
---   self.y = 420
---   self.size = math.random(width/20, width/10)
---   self.img = puddleImg
---   Collidable.init(self, self.x,self.y,self.size,10)
--- end
 
 function Still:init(x, y, imageProperties)
   self.img = imageProperties.img

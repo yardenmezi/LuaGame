@@ -1,9 +1,7 @@
+require "States/Game/Figures/Figure"
 
-require "Figure"
 Enemy = Class{}
 
-local enemyPic = love.graphics.newImage('images/goast.png')
-local sounds = {['bark'] = love.audio.newSource('sounds/wall_hit.wav', 'static')}
 onGround  = false
 
 Enemy  = {}
@@ -25,8 +23,8 @@ end
 function Enemy:update(dt)
   Figure.update(self,dt)
   self.x = self.x - screenScroll
-
 end
+
 function Enemy:getAction()
   return ACTION.NO_MOVE
 end

@@ -1,6 +1,6 @@
 Collidable = {}
 collisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
--- Collidable.xyz = 1
+
 Collidable.__index = Collidable
 setmetatable(Collidable, {
   __call = function (cls, ...)
@@ -32,10 +32,7 @@ function Collidable:getVirtPt()
   return {self.x + self.virtPosDiff.x, self.y + self.virtPosDiff.y}
 end
 
--- function Collidable:update(dt)
--- end
---
--- end
+
 function Collidable:setHeight(newY)
   self.y = newY
 end
@@ -43,37 +40,17 @@ end
 function Collidable:handleBlockCollision(obj)
   local Y=2
   objpt = obj:getVirtPt()
-  -- print(self:lala())
   size = self:getVirtSize()
   pt = self:getVirtPt()
-  -- print()
-  -- print(size[2])
-  -- print("---")
-  -- print(pt[Y]+size[Y]-30)
-  -- print(objPt[Y])
   if pt[Y] + size[Y]-SPEED  < objPt[Y]  then
     self:setHeight(objpt[Y]-size[Y])
   end
-  --  if it's above.
-  -- if self.y + self.sizeY  < solidObj.y then
-    -- self.y =
-  -- else
-    -- self.x = solidObj.x - self.sizeX
-  -- end
 end
 -- TODO: SHOULD CHANGE THE COLLISION OF THE AVATAR WHEN SWITCH SIDES.(SIZE TO PT AND PT TO SIZE)
--- function Collidable:handleRegCollision(solidObj)
---   pt = self:getVirtPt()
---   self.x = pt[1]- 60
---   -- self.x = self.x- 60
---   -- self.y = self.y- 60
---   -- self:setHeight(self.y- 60)
---   self:setHeight(pt[2]- 60)
--- end
+
 
 function Collidable:handleHarmCollision(solidObj)
-  self.x = self.x- 60
-  -- self.y = self.y- 60
+  self.x =self.x- 60
   self:setHeight(self.y + 20)
 end
 
@@ -85,14 +62,7 @@ function Collidable:checkCollision(obj)
   size = self:getVirtSize()
   objPt = obj:getVirtPt()
   objSize = obj:getVirtSize()
-  -- print(objPt[X])
-  -- Checking left collision
 
-  -- Checking collision from right
-
-  -- Checking collision from up
-
-  -- Checking collision from down
   rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
   leftBound =  math.min(pt[X], objPt[X])
   upperBound =   math.min(pt[Y], objPt[Y])
@@ -114,6 +84,5 @@ function Collidable:handleCollision(solidObj)
       return self:handleRegCollision(solidObj)
     end
   end
-  -- TODO: false for needed to delete object
   return false
 end
