@@ -56,3 +56,13 @@ setmetatable(Butterfly, {
 ### Bug Reporting
 Everyone is free to report bugs, suggest fixes, and share ideas for improvements. Your feedback is invaluable in making this game better.
 Please open an issue on GitHub for any bugs or suggestions.
+
+### Credits:
+* Starting music:
+Music by <a href="https://pixabay.com/users/desifreemusic-28163210/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=243043">Omar Faruque</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=243043">Pixabay</a>
+* backround music:
+
+* Ending music:
+ Music by <a href="https://pixabay.com/users/marshallb-7250253/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=12023">MarshallB</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=12023">Pixabay</a>
+
+

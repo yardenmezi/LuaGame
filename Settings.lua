@@ -1,8 +1,8 @@
-startSound = love.audio.newSource('sounds/birdTutorial.mp3', 'static')
+startSound = love.audio.newSource('sounds/bolg-music-music-for-blog-243043.mp3', 'static')
 
 sounds = {
-  ['gameMusic'] = love.audio.newSource('sounds/backround_music.mp3', 'static'),
-  ['gameOver'] = love.audio.newSource('sounds/lookAtMeNow.wav', 'static'),
+  ['gameMusic'] = love.audio.newSource('sounds/chill-house-tranquil-beats-251696.mp3', 'static'),
+  ['gameOver'] = love.audio.newSource('sounds/royalty-free-indian-music-2022panjabi-bhangra-beat-12023.mp3', 'static'),
   ['scaryNoise'] = love.audio.newSource('sounds/toodoom.wav', 'static'),
   ['bark'] = love.audio.newSource('sounds/bark.wav', 'static'),
   ['jump'] =love.audio.newSource('sounds/woop.wav', 'static'),

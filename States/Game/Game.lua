@@ -23,6 +23,7 @@ g = 9.8
 local BACKGROUND_LOOPING_POINT = 300
 local skyScroll = 0
 local STARTING_PT = { X = 200, Y = 20 }
+local scoreColor = { 0, 0, 1 }
 
 ------ Game Definitions ------
 local height = love.graphics.getHeight()
@@ -126,7 +127,7 @@ function Game:render()
     self.collidableObjects[i]:render()
   end
   self.player:render()
-  local coloredText = love.graphics.newText(fonts['game'], { { 0, 0, 1 }, self.player.score })
+  local coloredText = love.graphics.newText(fonts['game'], {scoreColor, self.player.score })
   love.graphics.draw(coloredText, 0, height - 40)
   if self.gameOverState then
     self.gameOverState:render()
