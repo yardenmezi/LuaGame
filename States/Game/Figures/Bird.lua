@@ -1,7 +1,7 @@
 ------ Imports ------
 require "States/Game/Figures/Enemy"
 require 'States/Game/ObjectAttributes/Animation'
-require "ClassInit"
+require "utils.ClassInit"
 require "Settings"
 
 Bird  = {}

@@ -1,5 +1,5 @@
 -- TODO: delete requirement and change the place of changing state (to avatar)
-require 'StateMachine'
+require 'States.StateMachine'
 require "States.Game.Grid"
 require "Settings"
 Board = {}

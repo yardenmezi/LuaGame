@@ -1,7 +1,7 @@
 
 require "States/Game/Figures/Figure"
 require "Settings"
-require "ClassInit"
+require "utils.ClassInit"
 
 
 Avatar = {}

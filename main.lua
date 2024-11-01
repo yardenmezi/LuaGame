@@ -1,6 +1,6 @@
 require 'States/Game/Game'
 require 'States/StartState'
-require 'StateMachine'
+require 'States.StateMachine'
 love.window.setTitle('Grass And Sun')
 
 function love.load()
