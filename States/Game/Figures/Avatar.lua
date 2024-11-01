@@ -2,7 +2,7 @@
 require "States/Game/Figures/Figure"
 require "Settings"
 require "ClassInit"
-Avatar = Class{}
+
 
 Avatar = {}
 -- inherit(Figure, Avatar)
@@ -89,7 +89,7 @@ function Avatar:getLeftLim()
 end
 
 function Avatar:handleScrolling()
-  boardSize =self.board:getBoardSize()
+  boardSize =board:getBoardSize()
   rightLim = boardSize[1]/3
   leftLim = boardSize[1]/8
   if board:isOutOfLimits(self) then
@@ -116,12 +116,12 @@ function Avatar:update(dt)
   if self.y > 430 then
     self.isAlive = false
   else
-    colType = board:hasCollisionRange(self.x,self.y,self.sizeX,self.sizeY)
+    local colType = board:hasCollisionRange(self.x,self.y,self.sizeX,self.sizeY)
     if colType[1] == cell.WORM then
       -- TODO: CHANGE TO WON STATE/GAME OVER STATE
       stateMachine:change('first')
     elseif colType[1] == cell.LEAF then
-      self.score = self.score + self.board:remove(colType)
+      self.score = self.score + board:remove(colType)
       sounds['eat']:play()
     end
     if self.timeOnAir<=0 then

@@ -8,13 +8,13 @@ function GetRandomPosition(width, height)
 end
 
 function Coin:init()
-  {x,y} = GetRandomPosition()
+  x,y = GetRandomPosition()
   Still.init(self,x,y,60,60,coinImg)
   self.collisionType = collisionType.PRIZE
 end
 
 function Coin:handleCollision(solidObj)
-  if self.isVisible  then
+  if self.isVisible then
     if self:checkCollision(solidObj) then
       if solidObj.collisionType == collisionType.PLAYER then
         sounds['coinTaking']:play()

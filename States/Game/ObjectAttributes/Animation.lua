@@ -18,12 +18,12 @@ function Animation:init(frames,timePerFrame)
   self.curFrameNum = 0
 end
 
-function getFramesFromImage(frameSize, image, framesNumber)
-  frames = {}
+function Animation:getFramesFromImage(frameSize, image, framesNumber)
+  Frames = {}
   for i=1,framesNumber do
-    frames[i] = love.graphics.newQuad(image:getWidth()/4*(i-1), 0, frameSize.width, frameSize.height, image:getHeight(), image:getDimensions())
+    Frames[i] = love.graphics.newQuad(image:getWidth()/4*(i-1), 0, frameSize.width, frameSize.height, image:getHeight(), image:getDimensions())
   end
-  return frames
+  return Frames
 end
 
 function Animation:getFrame()

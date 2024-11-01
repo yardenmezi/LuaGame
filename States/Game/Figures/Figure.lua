@@ -55,7 +55,7 @@ function Figure:flipImgUpdate(sign)
 end
 
 function Figure:move()
-  action = self:getAction()
+  local action = self:getAction()
   if (action == ACTION.UP and self.onGround ==true) or isJumping then
     self.dy = -self.speed
     self.inMotion = true

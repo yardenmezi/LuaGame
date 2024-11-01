@@ -1,10 +1,8 @@
 require "States/Game/Figures/Figure"
 
-Enemy = Class{}
-
 onGround  = false
-
 Enemy  = {}
+
 Enemy.__index = Enemy
 setmetatable(Enemy, {
   __index = Figure,

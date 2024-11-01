@@ -64,14 +64,13 @@ function Collidable:checkCollision(obj)
   objSize = obj:getVirtSize()
 
   rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
-  leftBound =  math.min(pt[X], objPt[X])
-  upperBound =   math.min(pt[Y], objPt[Y])
+  leftBound = math.min(pt[X], objPt[X])
+  upperBound = math.min(pt[Y], objPt[Y])
   lowerBound = math.max(size[Y] + pt[Y], objSize[Y] + objPt[Y])
-  if objSize[X]+ size[X] > rightBound-leftBound then
-    return objSize[Y] + size[Y] > lowerBound - upperBound
-  else
-    return false
+  if objSize[X] + size[X] > rightBound-leftBound and objSize[Y] + size[Y] > lowerBound - upperBound then
+    return  true
   end
+  return false
 end
 
 function Collidable:handleCollision(solidObj)

@@ -11,8 +11,6 @@ setmetatable(Still, {
   end,
 })
 
-local puddleImg = love.graphics.newImage('images/tree.png')
-
 function Still:init(x, y, imageProperties)
   self.img = imageProperties.img
   self.scaleX = imageProperties.sizeX / imageProperties.fsizeX
