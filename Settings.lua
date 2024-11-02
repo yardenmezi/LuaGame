@@ -30,4 +30,6 @@ messages ={
   ['startStateTitle']='Welcome!',
   ['gameInstructions'] =  {"Press arrows to move", "Press 'w' to jump", "Press 'q' to move butterfly when your'e on it (action takes a leaf)", "Beware of birds!", "Press ENTER to start game!"}
 }
-
+gameParameters={
+  ['playerSpeed'] = 20
+}

@@ -22,7 +22,7 @@ local imageProperties={img=images['bird'],sizeX=70,sizeY=70,frames={bottom_left,
 
 
 function Bird:init(board, x, y)
-    Enemy.init(self,board,x, y, 0, imageProperties, SPEED/8)
+    Enemy.init(self,board,x, y, 0, imageProperties, gameParameters.playerSpeed/8)
     self.flyingAnim = Animation({top_left,bottom_left},0.2)
 end
 

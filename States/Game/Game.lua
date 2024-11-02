@@ -29,7 +29,7 @@ local scoreColor = { 0, 0, 1 }
 local height = love.graphics.getHeight()
 local width = love.graphics.getWidth()
 local heightThreshold = (3 * height) / 4
-local objectRange = (SPEED * 10)
+local objectRange = (gameParameters.playerSpeed * 10)
 
 function Game:setGraphicsSetting()
   screenScroll = 0

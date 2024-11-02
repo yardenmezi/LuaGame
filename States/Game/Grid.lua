@@ -54,7 +54,7 @@ end
 
 function Grid:remove(boardCellX, boardCellY)
   -- should find the first cells. returns num of objects that removed
-  nonEmptyCells = self:getNonEmptyCells(boardCellX,boardCellY)
+  local nonEmptyCells = self:getNonEmptyCells(boardCellX,boardCellY)
   for idx = 1, (#nonEmptyCells) do
     for i = nonEmptyCells[idx][1], nonEmptyCells[idx][1] + self.cellSpanX do
       for j = nonEmptyCells[idx][2], nonEmptyCells[idx][2] + self.cellSpanY do

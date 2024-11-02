@@ -13,19 +13,21 @@ setmetatable(Butterfly, {
   end,
 })
 
-frames = {}
-for i = 1, 3 do
-  image = images['butterfly']
-  frames[i] = love.graphics.newQuad(image:getWidth() / 3 * (i - 1), 0, image:getWidth() / 3, image:getHeight(),
-    image:getDimensions())
-end
-local imageProperties = { img = image, sizeX = 60, sizeY = 60, frames = frames, fsizeX = image:getWidth() / 3, fsizeY =
-image:getHeight() }
 
 TIME_TO_MOVE = 0.4
 
 
 function Butterfly:init(x, y, g, player)
+  local frames = getFramesFromImage(images.butterfly, 3)
+  local imageProperties = {
+    img = images.butterfly,
+    sizeX = 60,
+    sizeY = 60,
+    frames = frames,
+    fsizeX = image:getWidth() / 3,
+    fsizeY =
+        image:getHeight()
+  }
   Still.init(self, x, y, imageProperties)
   self.player = player
   self.numOfSteps = -15
