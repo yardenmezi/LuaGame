@@ -32,5 +32,7 @@ messages ={
 }
 gameParameters={
   ['playerSpeed'] = 20,
+  ['skyScrollSpeed'] = 0.2,
   ['numSurfaces'] = 100,
+  ['numBirds']=3
 }
