@@ -28,14 +28,9 @@ local scoreColor = { 0, 0, 1 }
 ------ Game Definitions ------
 local height = love.graphics.getHeight()
 local width = love.graphics.getWidth()
-local heightThreshold = 3 * height / 4
+local heightThreshold = (3 * height) / 4
 local objectRange = (SPEED * 10)
-local butterflyBoundaries = {
-  xMin = 40,
-  xMax = objectRange,
-  yMin = heightThreshold - 200,
-  yMax = heightThreshold
-}
+
 function Game:setGraphicsSetting()
   screenScroll = 0
   love.graphics.setColor(1, 1, 1)
@@ -59,8 +54,14 @@ function Game:getRandomPosition(boundaries)
 end
 
 function Game:setButterflies()
-  local numLowButterflies = 50
-  local numHighButterflies = 100
+  local butterflyBoundaries = {
+    xMin = 200,
+    xMax = objectRange,
+    yMin = heightThreshold - 200,
+    yMax = heightThreshold
+  }
+  local numLowButterflies = 20
+  local numHighButterflies = 10
   for i = 1, numLowButterflies do
     local pos = self:getRandomPosition(butterflyBoundaries)
     self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], g, self.player)
@@ -68,7 +69,7 @@ function Game:setButterflies()
     butterflyBoundaries.xMax = butterflyBoundaries.xMax + objectRange
   end
   for j = 1, numHighButterflies do
-    local pos = self:getRandomPosition({ xMin = 1, xMax = width * 20, yMin = 1, yMax = heightThreshold - 200 })
+    local pos = self:getRandomPosition({ xMin = 1, xMax = width * 30, yMin = 1, yMax = heightThreshold })
     self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], g, self.player)
   end
 end
