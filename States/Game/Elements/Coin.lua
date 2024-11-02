@@ -1,27 +1,23 @@
+Coin = declareClass(Still, Coin)
+COIN_VALUE = 1
 
-Coin = declareClass(Still,Coin)
 function GetRandomPosition(width, height)
   local x = math.random(0, width * 6)
   local y = math.random(0, height / 2)
-  return {x,y}
+  return { x, y }
 end
 
 function Coin:init()
-  x,y = GetRandomPosition()
-  Still.init(self,x,y,60,60,coinImg)
+  x, y = GetRandomPosition()
+  Still.init(self, x, y, 60, 60, images.coin)
   self.collisionType = collisionType.PRIZE
 end
 
 function Coin:handleCollision(solidObj)
-  if self.isVisible then
-    if self:checkCollision(solidObj) then
-      if solidObj.collisionType == collisionType.PLAYER then
-        sounds['coinTaking']:play()
-        self.img = nil
-        self.isVisible = false
-        return 1
-      end
-    end
+  if self.isVisible and self:checkCollision(solidObj) and solidObj.collisionType == collisionType.PLAYER then
+    self.img = nil
+    self.isVisible = false
+    return COIN_VALUE
   end
   return 0
 end
