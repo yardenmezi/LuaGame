@@ -7,6 +7,7 @@ setmetatable(Game, {
     return self
   end,
 })
+
 ------ Imports ------
 require 'States/Game/Figures/Avatar'
 require 'States/Game/Figures/Bird'
@@ -22,7 +23,7 @@ SPEED = 20
 g = 9.8
 local BACKGROUND_LOOPING_POINT = 300
 local skyScroll = 0
-local STARTING_PT = { X = 200, Y = 20 }
+local STARTING_PT = { X = 20, Y = 1 }
 local scoreColor = { 0, 0, 1 }
 
 ------ Game Definitions ------
@@ -30,6 +31,7 @@ local height = love.graphics.getHeight()
 local width = love.graphics.getWidth()
 local heightThreshold = (3 * height) / 4
 local objectRange = (gameParameters.playerSpeed * 10)
+local scorePosition = { 0, 1}
 
 function Game:setGraphicsSetting()
   screenScroll = 0
@@ -40,9 +42,8 @@ function Game:setObjects()
   self.player = nil
   board = Board(width, height)
   self.player = Avatar(board, STARTING_PT.X, STARTING_PT.Y, g)
-  local birdPositions = { { x = 700, y = 100 }, { x = 1500, y = 200 }, { x = 2500, y = 150 } }
-  for i = 1, #birdPositions do
-    self.collidableObjects[i] = Bird(board, birdPositions[i].x, birdPositions[i].y, g)
+  for i=1, gameParameters.numBirds do
+    self.collidableObjects[i] = Bird(board, width * i, (height*i/4), g)
   end
   self:setButterflies()
 end
@@ -110,8 +111,8 @@ function Game:update(dt)
     self:handlePlayerLost(dt)
   else
     self:updateObjects(dt)
-    screenScroll = self.player:getScrolling()
-    skyScroll = (skyScroll + 0.1) % BACKGROUND_LOOPING_POINT
+    screenScroll = self.player:getScrolling()    
+    skyScroll = (skyScroll + gameParameters.skyScrollSpeed) % BACKGROUND_LOOPING_POINT
   end
 end
 
@@ -121,15 +122,16 @@ end
 
 function Game:render()
   -- TODO: check how to change it to love.graphics.translate(-math.floor(screenScroll), 0)
-  love.graphics.draw(images.backround, -skyScroll, 0, 0, 0.255)
+  cloudsScale = 0.3
+  love.graphics.draw(images.backround, -skyScroll, 0, 0, cloudsScale)
   board:render()
 
   for i = 1, #self.collidableObjects do
     self.collidableObjects[i]:render()
   end
   self.player:render()
-  local coloredText = love.graphics.newText(fonts['game'], {scoreColor, self.player.score })
-  love.graphics.draw(coloredText, 0, height - 40)
+  local scoreTxt = love.graphics.newText(fonts['game'], {scoreColor, self.player.score })  
+  love.graphics.draw(scoreTxt, scorePosition[1],scorePosition[1])
   if self.gameOverState then
     self.gameOverState:render()
   end
