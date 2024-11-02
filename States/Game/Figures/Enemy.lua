@@ -1,17 +1,7 @@
 require "States/Game/Figures/Figure"
 
 onGround  = false
-Enemy  = {}
-
-Enemy.__index = Enemy
-setmetatable(Enemy, {
-  __index = Figure,
-  __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:init(...)
-    return self
-  end,
-})
+Enemy = declareClass(Figure, Enemy)
 
 function Enemy:init(board,x, y,g,imageProperties,speed)
   Figure.init(self,board,x, y, g,imageProperties, speed)

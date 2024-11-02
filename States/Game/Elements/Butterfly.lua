@@ -1,19 +1,7 @@
 require "States/Game/ObjectAttributes/Still"
 require 'States/Game/ObjectAttributes/Animation'
--- Butterfly = {}
--- inherit(Butterfly, Still)
-Butterfly = {}
-Butterfly.__index = Butterfly
-setmetatable(Butterfly, {
-  __index = Still,
-  __call = function(cls, ...)
-    local self = setmetatable({}, cls)
-    self:init(...)
-    return self
-  end,
-})
 
-
+Butterfly = declareClass(Still, Butterfly)
 TIME_TO_MOVE = 0.4
 
 

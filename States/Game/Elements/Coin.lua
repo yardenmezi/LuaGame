@@ -1,6 +1,5 @@
-Coin = {}
-inherit(Coin, Still)
 
+Coin = declareClass(Still,Coin)
 function GetRandomPosition(width, height)
   local x = math.random(0, width * 6)
   local y = math.random(0, height / 2)

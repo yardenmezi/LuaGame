@@ -1,14 +1,8 @@
-Collidable = {}
+require "utils.ClassInit"
+
 collisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
 
-Collidable.__index = Collidable
-setmetatable(Collidable, {
-  __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:_init(...)
-    return self
-  end,
-})
+Collidable =declareClass(nil, Collidable)
 
 function Collidable:init(x,y,sizeX,sizeY,virtPosDiff,virtSizeDiff)
   self.x = x

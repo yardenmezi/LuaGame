@@ -1,18 +1,10 @@
 require 'States/Game/ObjectAttributes/Collidable'
 require 'States/Game/ObjectAttributes/Animation'
+require "utils.ClassInit"
 
 ACTION = {DOWN=1, UP=2, LEFT=3, RIGHT=4, NO_MOVE=5}
 
-Figure = {}
-Figure.__index = Figure
-setmetatable(Figure, {
-  __index = Collidable,
-  __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:init(...)
-    return self
-  end,
-})
+Figure = declareClass(Collidable, Figure)
 
 function Figure:init(board,x, y, g,imageProperties,speed)
   Collidable.init(self, x, y, imageProperties.sizeX,imageProperties.sizeY,{x=20,y=0},{x=-20,y=-20})

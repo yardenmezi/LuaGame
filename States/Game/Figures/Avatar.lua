@@ -4,17 +4,7 @@ require "Settings"
 require "utils.ClassInit"
 
 
-Avatar = {}
--- inherit(Figure, Avatar)
-Avatar.__index = Avatar
-setmetatable(Avatar, {
-  __index = Figure,
-  __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:init(...)
-    return self
-  end,
-})
+Avatar = declareClass(Figure, Avatar)
 
 local frames = {}
 for i=1,4 do

@@ -4,16 +4,8 @@ require 'States/Game/ObjectAttributes/Animation'
 require "utils.ClassInit"
 require "Settings"
 
-Bird  = {}
-Bird.__index = Bird
-setmetatable(Bird, {
-  __index = Enemy,
-  __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:init(...)
-    return self
-  end,
-})
+Bird = declareClass(Enemy, Bird)
+
 -- TODO: CHANGE animation frames.
 birdSize = {width = 444,height = 444}
 top_left = love.graphics.newQuad(0, 0,birdSize.width,birdSize.height, images['bird']:getDimensions())
