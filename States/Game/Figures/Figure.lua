@@ -59,13 +59,13 @@ function Figure:move()
     self:flipImgUpdate(-1)
   elseif action == ACTION.RIGHT then
     self:flipImgUpdate(1)
-    inMotion =true
+    self.inMotion =true
   else
     self.inMotion = false
   end
   self:setHeight(self.y + self.dy)
   self:handleGravity()
-  tmpX = self.x + self.dx
+  local tmpX = self.x + self.dx
   if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~= CELL_TYPE.GROUND then
     self.x = self.x + self.dx
   end

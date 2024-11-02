@@ -20,7 +20,7 @@ require "States/GameOver"
 require "Settings"
 ------ Consts ------
 SPEED = 20
-g = 9.8
+G = 9.8
 local BACKGROUND_LOOPING_POINT = 300
 local skyScroll = 0
 local STARTING_PT = { X = 20, Y = 1 }
@@ -41,9 +41,9 @@ end
 function Game:setObjects()
   self.player = nil
   board = Board(width, height)
-  self.player = Avatar(board, STARTING_PT.X, STARTING_PT.Y, g)
+  self.player = Avatar(board, STARTING_PT.X, STARTING_PT.Y, G)
   for i=1, GameParameters.numBirds do
-    self.collidableObjects[i] = Bird(board, width * i, (height*i/4), g)
+    self.collidableObjects[i] = Bird(board, width * i, (height*i/4), G)
   end
   self:setButterflies()
 end
@@ -65,13 +65,13 @@ function Game:setButterflies()
   local numHighButterflies = 10
   for i = 1, numLowButterflies do
     local pos = self:getRandomPosition(butterflyBoundaries)
-    self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], g, self.player)
+    self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], G, self.player)
     butterflyBoundaries.xMin = butterflyBoundaries.xMax
     butterflyBoundaries.xMax = butterflyBoundaries.xMax + objectRange
   end
   for j = 1, numHighButterflies do
     local pos = self:getRandomPosition({ xMin = 1, xMax = width * 30, yMin = 1, yMax = heightThreshold })
-    self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], g, self.player)
+    self.collidableObjects[#self.collidableObjects + 1] = Butterfly(pos[1], pos[2], G, self.player)
   end
 end
 

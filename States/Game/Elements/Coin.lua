@@ -8,7 +8,7 @@ function GetRandomPosition(width, height)
 end
 
 function Coin:init()
-  x, y = GetRandomPosition()
+  local x, y = GetRandomPosition()
   Still.init(self, x, y, 60, 60, Images.coin)
   self.collisionType = collisionType.PRIZE
 end

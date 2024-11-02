@@ -33,11 +33,11 @@ end
 
 function Collidable:handleBlockCollision(obj)
   local Y=2
-  local objpt = obj:getVirtPt()
+  local objPt = obj:getVirtPt()
   local size = self:getVirtSize()
   local pt = self:getVirtPt()
   if pt[Y] + size[Y]-SPEED  < objPt[Y]  then
-    self:setHeight(objpt[Y]-size[Y])
+    self:setHeight(objPt[Y]-size[Y])
   end
 end
 -- TODO: SHOULD CHANGE THE COLLISION OF THE AVATAR WHEN SWITCH SIDES.(SIZE TO PT AND PT TO SIZE)
@@ -52,10 +52,10 @@ function Collidable:checkCollision(obj)
   local X=1
   local Y=2
 
-  pt = self:getVirtPt()
-  size = self:getVirtSize()
-  objPt = obj:getVirtPt()
-  objSize = obj:getVirtSize()
+  local pt = self:getVirtPt()
+  local size = self:getVirtSize()
+  local objPt = obj:getVirtPt()
+  local objSize = obj:getVirtSize()
 
   local rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
   local leftBound = math.min(pt[X], objPt[X])

@@ -41,8 +41,8 @@ end
 
 function Grid:getNonEmptyCells(boardCellX,boardCellY)
   local cells = {}
-  for i = math.max(0, boardCellX - self.cellSpanX), math.min(boardCellX + self.cellSpanX, #self.map) do
-    for j = math.max(boardCellY - self.cellSpanY), math.min(boardCellY + self.cellSpanY, #self.map[1]) do
+  for i = math.max(1, boardCellX - self.cellSpanX), math.min(boardCellX + self.cellSpanX, #self.map) do
+    for j = math.max(1,boardCellY - self.cellSpanY), math.min(boardCellY + self.cellSpanY, #self.map[1]) do      
       if self.map[i][j] == 1 then
         cells[#cells + 1] = { i, j }
         -- TODO:FROM SOME RESON,IT DOSNT WORK WHEN TOUCHING THE 2
@@ -56,6 +56,7 @@ function Grid:remove(boardCellX, boardCellY)
   -- should find the first cells. returns num of objects that removed
   local nonEmptyCells = self:getNonEmptyCells(boardCellX,boardCellY)
   for idx = 1, (#nonEmptyCells) do
+
     for i = nonEmptyCells[idx][1], nonEmptyCells[idx][1] + self.cellSpanX do
       for j = nonEmptyCells[idx][2], nonEmptyCells[idx][2] + self.cellSpanY do
         self.map[i][j] = 0
