@@ -28,15 +28,22 @@ function Board:init(boardWidth, boardHeight)
   self:addRewards()
 end
 
+function Board:getTileSize()
+  return { TILE_WIDTH, TILE_HEIGHT }
+end
+
+function Board:getBoardSize()
+  return { TILES_PER_ROW, self.tilesPerCol }
+end
+
 function Board:generateGroundSurfaces()
   local groundSurfaces = {}
   local xbegin = 1
   local xend = math.ceil(SPEED * 3 / TILE_WIDTH)
-  -- build the game board.
   for i = 1, 100 do
     groundSurfaces[i] = {
       x = math.random(xbegin, xend),
-      y =  math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol),
+      y = math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol),
       width = math.random(5, 15),
       height = math.random(1, 3)
     }
@@ -48,13 +55,13 @@ end
 
 function Board:fill_ground_tiles(map)
   local groundSurfaces = self:generateGroundSurfaces()
-  for surfaceNum=1,#groundSurfaces do
+  for surfaceNum = 1, #groundSurfaces do
     local xEnd = groundSurfaces[surfaceNum].x + groundSurfaces[surfaceNum].width
     local yEnd = groundSurfaces[surfaceNum]['y'] + groundSurfaces[surfaceNum]['height']
-    for i=groundSurfaces[surfaceNum].x,xEnd do
-      for j=groundSurfaces[surfaceNum].y, yEnd do
-        if #map >i and #map[i]>j then
-          map[i][j]= CELL_TYPE.GROUND
+    for i = groundSurfaces[surfaceNum].x, xEnd do
+      for j = groundSurfaces[surfaceNum].y, yEnd do
+        if #map > i and #map[i] > j then
+          map[i][j] = CELL_TYPE.GROUND
         end
       end
     end
@@ -63,7 +70,7 @@ end
 
 function Board:createLvl()
   map = {}
-  for i=1,TILES_PER_ROW do
+  for i = 1, TILES_PER_ROW do
     map[i] = {}
     for j = 1, self.tilesPerCol do
       map[i][j] = CELL_TYPE.SKY
@@ -83,14 +90,6 @@ function Board:addRewards()
   end
 end
 
-function Board:getTileSize()
-  return { TILE_WIDTH, TILE_HEIGHT }
-end
-
-function Board:getBoardSize()
-  return { TILES_PER_ROW, self.tilesPerCol }
-end
-
 function Board:update(dt)
   if screenScroll % TILE_WIDTH == 0 then
     if screenScroll < 0 then
@@ -104,33 +103,31 @@ function Board:update(dt)
   end
 end
 
+function Board:getTileIndex(posX, posY)
+  return { math.ceil(posX / TILE_WIDTH) + self.tilesGap, math.ceil(posY / TILE_HEIGHT) }
+end
+
 function Board:hasCollisionRange(posX, posY, sizeX, sizeY)
   -- Check for invalid positions
   if posX <= 0 or posY <= 0 then
     return { 0 } -- Return an indication of no valid collision
   end
 
-  -- Calculate the grid cell range based on position and size
-  local firstRow = math.ceil(posX / TILE_WIDTH) + self.tilesGap
-  local lastRow = math.ceil((posX + sizeX) / TILE_WIDTH) + self.tilesGap
-  local firstCol = math.ceil(posY / TILE_HEIGHT)
-  local lastCol = math.ceil((posY + sizeY) / TILE_HEIGHT)
-
+  local upperRightPt = self:getTileIndex(posX, posY)
+  local lowerLeftPt = self:getTileIndex(posX + sizeX, posY + sizeY)
+  
   local collisionType = { CELL_TYPE.SKY } -- Default collision type
-
   -- Check for collisions within the specified grid range
-  for row = firstRow, lastRow do
-    for col = firstCol, lastCol do
+  for row = upperRightPt[1], lowerLeftPt[1] do
+    for col = upperRightPt[2], lowerLeftPt[2] do
       if self.leavesGrid:checkColInCell(row, col) then
-        collisionType = { CELL_TYPE.LEAF, { row, col } }   -- Collision with leaves
-        break                                         -- Exit the inner loop on collision
+        collisionType = { CELL_TYPE.LEAF, { row, col } } -- Collision with leaves
+        break                                            -- Exit the inner loop on collision
       end
-
       if self.map[row] and self.map[row][col] > 0 then
-        collisionType = { self.map[row][col], { row, col } }   -- Collision with a tile
+        collisionType = { self.map[row][col], { row, col } } -- Collision with a tile
       end
     end
-
     -- Break the outer loop if a collision was found
     if collisionType[1] ~= CELL_TYPE.SKY then
       break
@@ -160,12 +157,12 @@ function Board:remove(cellType)
 end
 
 function Board:render()
-  scale_x = TILE_WIDTH / images['grass']:getWidth()
-  scale_y = TILE_HEIGHT / images['grass']:getHeight()
-  tilesPerScreen = math.ceil(love.graphics.getWidth() / TILE_WIDTH)
+  local scale_x = TILE_WIDTH / images['grass']:getWidth()
+  local scale_y = TILE_HEIGHT / images['grass']:getHeight()
+  local tilesPerScreen = math.ceil(love.graphics.getWidth() / TILE_WIDTH)
   for i = 1 + self.tilesGap, tilesPerScreen + self.tilesGap do
     for j = 1, self.tilesPerCol do
-      place = self:getXYFromBoard(i, j)
+      local place = self:getXYFromBoard(i, j)
       self.leavesGrid:renderGridCell(i, j)
       if map[i][j] == CELL_TYPE.GROUND then
         love.graphics.draw(images['grass'], place[1], place[2], 0, scale_x, scale_y)
