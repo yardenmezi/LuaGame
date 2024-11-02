@@ -39,9 +39,9 @@ end
 
 function Collidable:handleBlockCollision(obj)
   local Y=2
-  objpt = obj:getVirtPt()
-  size = self:getVirtSize()
-  pt = self:getVirtPt()
+  local objpt = obj:getVirtPt()
+  local size = self:getVirtSize()
+  local pt = self:getVirtPt()
   if pt[Y] + size[Y]-SPEED  < objPt[Y]  then
     self:setHeight(objpt[Y]-size[Y])
   end
@@ -63,14 +63,13 @@ function Collidable:checkCollision(obj)
   objPt = obj:getVirtPt()
   objSize = obj:getVirtSize()
 
-  rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
-  leftBound = math.min(pt[X], objPt[X])
-  upperBound = math.min(pt[Y], objPt[Y])
-  lowerBound = math.max(size[Y] + pt[Y], objSize[Y] + objPt[Y])
-  if objSize[X] + size[X] > rightBound-leftBound and objSize[Y] + size[Y] > lowerBound - upperBound then
-    return  true
-  end
-  return false
+  local rightBound = math.max(size[X] + pt[X], objSize[X] + objPt[X])
+  local leftBound = math.min(pt[X], objPt[X])
+  local hasWidthOverlap = objSize[X] + size[X] > rightBound-leftBound 
+  local upperBound = math.min(pt[Y], objPt[Y])
+  local lowerBound = math.max(size[Y] + pt[Y], objSize[Y] + objPt[Y])
+  local hasHeightOverlap = objSize[Y] + size[Y] > lowerBound - upperBound
+  return  hasWidthOverlap and hasHeightOverlap
 end
 
 function Collidable:handleCollision(solidObj)

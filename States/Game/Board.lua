@@ -24,7 +24,7 @@ function Board:init(boardWidth, boardHeight)
   -- TILES_PER_ROW = boardWidth/TILE_WIDTH
   self.map = self:createLvl()
   self.tilesGap = 0
-  self.leavesGrid = Grid(self, 3, 3, images['coin'])
+  self.leavesGrid = Grid(self, 3, 3, images.coin)
   self:addRewards()
 end
 
@@ -40,7 +40,7 @@ function Board:generateGroundSurfaces()
   local groundSurfaces = {}
   local xbegin = 1
   local xend = math.ceil(SPEED * 3 / TILE_WIDTH)
-  for i = 1, 100 do
+  for i = 1, gameParameters.numSurfaces do
     groundSurfaces[i] = {
       x = math.random(xbegin, xend),
       y = math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol),
