@@ -117,10 +117,10 @@ function Avatar:update(dt)
     self.isAlive = false
   else
     local colType = board:hasCollisionRange(self.x,self.y,self.sizeX,self.sizeY)
-    if colType[1] == cell.WORM then
+    if colType[1] == CELL_TYPE.WORM then
       -- TODO: CHANGE TO WON STATE/GAME OVER STATE
       stateMachine:change('first')
-    elseif colType[1] == cell.LEAF then
+    elseif colType[1] == CELL_TYPE.LEAF then
       self.score = self.score + board:remove(colType)
       sounds['eat']:play()
     end

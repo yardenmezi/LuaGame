@@ -37,7 +37,7 @@ function Figure:getAction()
 end
 
 function Figure:setHeight(newY)
-  if self.board:hasCollisionRange(self.x, newY,self.sizeX,self.sizeY)[1] == cell.GROUND  then
+  if self.board:hasCollisionRange(self.x, newY,self.sizeX,self.sizeY)[1] == CELL_TYPE.GROUND  then
     self.onGround = true
   else
     self.y = newY
@@ -74,7 +74,7 @@ function Figure:move()
   self:setHeight(self.y + self.dy)
   self:handleGravity()
   tmpX = self.x + self.dx
-  if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~= cell.GROUND then
+  if self.board:hasCollisionRange(tmpX,self.y,self.sizeX,self.sizeY)[1] ~= CELL_TYPE.GROUND then
     self.x = self.x + self.dx
   end
   self.dx = 0

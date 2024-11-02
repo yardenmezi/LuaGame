@@ -14,7 +14,7 @@ setmetatable(Board, {
   end,
 })
 
-cell = { SKY = 0, GROUND = 1, WORM = 2, LEAF = 3 }
+CELL_TYPE = { SKY = 0, GROUND = 1, WORM = 2, LEAF = 3 }
 local TILE_WIDTH = 15
 local TILE_HEIGHT = 20
 local TILES_PER_ROW = 1050
@@ -28,35 +28,50 @@ function Board:init(boardWidth, boardHeight)
   self:addRewards()
 end
 
-function Board:createLvl()
-  randomPairs = {}
-  xbegin = 1
-  xend = math.ceil(SPEED * 3 / TILE_WIDTH)
+function Board:generateGroundSurfaces()
+  local groundSurfaces = {}
+  local xbegin = 1
+  local xend = math.ceil(SPEED * 3 / TILE_WIDTH)
   -- build the game board.
   for i = 1, 100 do
-    randomPairs[i] = {}
-    randomPairs[i]['x'] = math.random(xbegin, xend)
-    randomPairs[i]['sizex'] = math.random(5, 15)
-    randomPairs[i]['y'] = math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol)
-    randomPairs[i]['sizey'] = math.random(1, 3)
-    xbegin = xend + randomPairs[i]['sizex']
+    groundSurfaces[i] = {
+      x = math.random(xbegin, xend),
+      y =  math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol),
+      width = math.random(5, 15),
+      height = math.random(1, 3)
+    }
+    xbegin = xend + groundSurfaces[i]['width']
     xend = math.min(xbegin + math.ceil(SPEED * 15 / TILE_WIDTH), TILES_PER_ROW - 20)
   end
-  map = {}
-  for i = 1, TILES_PER_ROW do
-    map[i] = {}
-    for j = 1, self.tilesPerCol do
-      map[i][j] = cell.SKY
-      for pairNum = 1, 100 do
-        if i >= randomPairs[pairNum]['x'] and i <= randomPairs[pairNum]['x'] + randomPairs[pairNum]['sizex'] then
-          if j >= randomPairs[pairNum]['y'] and j <= randomPairs[pairNum]['y'] + randomPairs[pairNum]['sizey'] then
-            map[i][j] = cell.GROUND
-          end
+  return groundSurfaces
+end
+
+function Board:fill_ground_tiles(map)
+  local groundSurfaces = self:generateGroundSurfaces()
+  for surfaceNum=1,#groundSurfaces do
+    local xEnd = groundSurfaces[surfaceNum].x + groundSurfaces[surfaceNum].width
+    local yEnd = groundSurfaces[surfaceNum]['y'] + groundSurfaces[surfaceNum]['height']
+    for i=groundSurfaces[surfaceNum].x,xEnd do
+      for j=groundSurfaces[surfaceNum].y, yEnd do
+        if #map >i and #map[i]>j then
+          map[i][j]= CELL_TYPE.GROUND
         end
       end
     end
   end
-  map[995][22] = cell.WORM
+end
+
+function Board:createLvl()
+  map = {}
+  for i=1,TILES_PER_ROW do
+    map[i] = {}
+    for j = 1, self.tilesPerCol do
+      map[i][j] = CELL_TYPE.SKY
+    end
+  end
+  self:fill_ground_tiles(map)
+
+  map[995][22] = CELL_TYPE.WORM
   return map
 end
 
@@ -101,13 +116,13 @@ function Board:hasCollisionRange(posX, posY, sizeX, sizeY)
   local firstCol = math.ceil(posY / TILE_HEIGHT)
   local lastCol = math.ceil((posY + sizeY) / TILE_HEIGHT)
 
-  local collisionType = { cell.SKY } -- Default collision type
+  local collisionType = { CELL_TYPE.SKY } -- Default collision type
 
   -- Check for collisions within the specified grid range
   for row = firstRow, lastRow do
     for col = firstCol, lastCol do
       if self.leavesGrid:checkColInCell(row, col) then
-        collisionType = { cell.LEAF, { row, col } }   -- Collision with leaves
+        collisionType = { CELL_TYPE.LEAF, { row, col } }   -- Collision with leaves
         break                                         -- Exit the inner loop on collision
       end
 
@@ -117,7 +132,7 @@ function Board:hasCollisionRange(posX, posY, sizeX, sizeY)
     end
 
     -- Break the outer loop if a collision was found
-    if collisionType[1] ~= cell.SKY then
+    if collisionType[1] ~= CELL_TYPE.SKY then
       break
     end
   end
@@ -137,7 +152,7 @@ function Board:getXYFromBoard(cellX, cellY)
 end
 
 function Board:remove(cellType)
-  if cellType[1] == cell.LEAF then
+  if cellType[1] == CELL_TYPE.LEAF then
     return self.leavesGrid:remove(cellType[2][1], cellType[2][2])
   else
     return 0
@@ -152,9 +167,9 @@ function Board:render()
     for j = 1, self.tilesPerCol do
       place = self:getXYFromBoard(i, j)
       self.leavesGrid:renderGridCell(i, j)
-      if map[i][j] == cell.GROUND then
+      if map[i][j] == CELL_TYPE.GROUND then
         love.graphics.draw(images['grass'], place[1], place[2], 0, scale_x, scale_y)
-      elseif map[i][j] == cell.WORM then
+      elseif map[i][j] == CELL_TYPE.WORM then
         love.graphics.draw(images['worm'], ((i - 1 - self.tilesGap) * TILE_WIDTH), (j - 1) * TILE_HEIGHT, 0, scale_x * 5,
           scale_y / 2)
       end

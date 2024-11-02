@@ -8,53 +8,62 @@ setmetatable(Grid, {
   end,
 })
 
-function Grid:init(board, scaleBoardX, scaleBoardY, img)
-  self.scaleX = scaleBoardX
-  self.scaleY = scaleBoardY
-  self.renderScaleX = (board:getTileSize()[1] * scaleBoardX) / img:getWidth()
-  self.renderScaleY = (board:getTileSize()[2] * scaleBoardY) / img:getHeight()
-  self.sprite = sprite
-  local map = {}
+function Grid:init_matrix(board)
+  local matrix = {}
   local sizeBoard = board:getBoardSize()
   for i = 1, sizeBoard[1] do
-    map[i] = {}
+    matrix[i] = {}
     for j = 1, sizeBoard[2] do
-      map[i][j] = 0
+      matrix[i][j] = 0
     end
   end
-  self.map = map
+  return matrix
+end
+
+function Grid:init(board, cellSpanX, cellSpanY, img)
+  self.cellSpanX = cellSpanX
+  self.cellSpanY = cellSpanY
+  self.renderScaleX = (board:getTileSize()[1] * cellSpanX) / img:getWidth()
+  self.renderScaleY = (board:getTileSize()[2] * cellSpanY) / img:getHeight()
+  self.sprite = sprite
+  self.map = self:init_matrix(board)
   self.img = img
 end
 
-function Grid:insert(boardCellX, boardCellY)
-  for i = boardCellX, boardCellX + self.scaleX do
-    for j = boardCellY, boardCellY + self.scaleY do
-      self.map[boardCellX][boardCellY] = 2
+function Grid:insert(boardPosX, boardPosY)
+  for i = boardPosX, boardPosX + self.cellSpanX do
+    for j = boardPosY, boardPosY + self.cellSpanY do
+      self.map[boardPosX][boardPosY] = 2
     end
   end
-  self.map[boardCellX][boardCellY] = 1
+  self.map[boardPosX][boardPosY] = 1
 end
 
-function Grid:remove(boardCellX, boardCellY)
-  -- should find the first cells. returns num of objects that removed
+function Grid:getNonEmptyCells(boardCellX,boardCellY)
   local cells = {}
-  for i = math.max(0, boardCellX - self.scaleX), math.min(boardCellX + self.scaleX, #self.map) do
-    for j = math.max(boardCellY - self.scaleY), math.min(boardCellY + self.scaleY, #self.map[1]) do
+  for i = math.max(0, boardCellX - self.cellSpanX), math.min(boardCellX + self.cellSpanX, #self.map) do
+    for j = math.max(boardCellY - self.cellSpanY), math.min(boardCellY + self.cellSpanY, #self.map[1]) do
       if self.map[i][j] == 1 then
         cells[#cells + 1] = { i, j }
         -- TODO:FROM SOME RESON,IT DOSNT WORK WHEN TOUCHING THE 2
       end
     end
   end
-  for idx = 1, (#cells) do
-    for i = cells[idx][1], cells[idx][1] + self.scaleX do
-      for j = cells[idx][2], cells[idx][2] + self.scaleY do
+  return cells
+end
+
+function Grid:remove(boardCellX, boardCellY)
+  -- should find the first cells. returns num of objects that removed
+  nonEmptyCells = self:getNonEmptyCells(boardCellX,boardCellY)
+  for idx = 1, (#nonEmptyCells) do
+    for i = nonEmptyCells[idx][1], nonEmptyCells[idx][1] + self.cellSpanX do
+      for j = nonEmptyCells[idx][2], nonEmptyCells[idx][2] + self.cellSpanY do
         self.map[i][j] = 0
       end
     end
   end
 
-  return #cells
+  return #nonEmptyCells
 end
 
 function Grid:checkColInCell(boardCellX, boardCellY)
