@@ -24,13 +24,23 @@ function Butterfly:init(x, y, g, player)
   self.movingTime = 0
 end
 
-function Butterfly:update(dt)
-  self.flyingAnim:update(dt)
+function Butterfly:handleFlightRequest()
   if self:checkCollision(self.player) then
-    if self.player:hasMadeNoise() then
-      self.movingTime = TIME_TO_MOVE
-    end
+    Sounds['bark']:play()
+    -- if self.player:hasMadeNoise() then
+    self.movingTime = TIME_TO_MOVE
+    -- end
   end
+end
+
+function Butterfly:update(dt, request)
+  local requestCompleted = false
+  if self:checkCollision(self.player) and request then
+    Sounds['bark']:play()
+    requestCompleted = true    
+    self.movingTime = TIME_TO_MOVE
+  end
+  self.flyingAnim:update(dt)
   self.movingTime = self.movingTime - dt
   if self.movingTime > 0 then
     if self.movingTime > TIME_TO_MOVE / 2 then
@@ -42,6 +52,7 @@ function Butterfly:update(dt)
     self.movingTime = 0
   end
   self.x = self.x - screenScroll
+  return requestCompleted
 end
 
 function Butterfly:render()

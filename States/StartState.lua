@@ -47,7 +47,6 @@ end
 
 function StartState:stop()
   StartSound:stop()
-  keypressed = {}
 end
 
 function StartState:render()

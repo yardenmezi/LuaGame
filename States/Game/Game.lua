@@ -80,6 +80,7 @@ function Game:init()
   self:setGraphicsSetting()
   self:setObjects()
   self.gameOverState = nil
+  self.score = 0
   Sounds.gameMusic:play()
 end
 
@@ -91,12 +92,21 @@ function Game:handlePlayerLost(dt)
   self.gameOverState:update(dt)
 end
 
-function Game:updateObjects(dt)
-  self.player:update(dt)
+function Game:updateObjects(dt,requestedFlight)
+  local collisionType = self.player:update(dt)
+  if collisionType[1] == CELL_TYPE.LEAF then
+    Sounds['eat']:play()
+    self.score = self.score + board:remove(collisionType)
+  end
   board:update(dt)
-
+  if requestedFlight then
+    requestedFlight =  self.score>0
+  end
   for i = 1, #self.collidableObjects do
-    self.collidableObjects[i]:update(dt)
+    if self.collidableObjects[i]:update(dt,requestedFlight) then
+      self.score = self.score-1
+      keypressed = {}
+    end
   end
 
   for i = 1, #self.collidableObjects do
@@ -110,10 +120,17 @@ function Game:update(dt)
   if not self.player:checkAlive() then
     self:handlePlayerLost(dt)
   else
-    self:updateObjects(dt)
-    screenScroll = self.player:getScrolling()    
+    local requestedFlight = false
+    if keypressed == "q" then
+      requestedFlight = true
+      
+    end
+    self:updateObjects(dt, requestedFlight)
+    screenScroll = self.player:getScrolling()
+
     skyScroll = (skyScroll + GameParameters.skyScrollSpeed) % BACKGROUND_LOOPING_POINT
   end
+  
 end
 
 function Game:stop()
@@ -122,7 +139,7 @@ end
 
 function Game:render()
   -- TODO: check how to change it to love.graphics.translate(-math.floor(screenScroll), 0)
-  cloudsScale = 0.3
+  local cloudsScale = 0.3
   love.graphics.draw(Images.backround, -skyScroll, 0, 0, cloudsScale)
   board:render()
 
@@ -130,7 +147,7 @@ function Game:render()
     self.collidableObjects[i]:render()
   end
   self.player:render()
-  local scoreTxt = love.graphics.newText(Fonts['game'], {scoreColor, self.player.score })  
+  local scoreTxt = love.graphics.newText(Fonts['game'], {scoreColor, self.score })  
   love.graphics.draw(scoreTxt, scorePosition[1],scorePosition[1])
   if self.gameOverState then
     self.gameOverState:render()

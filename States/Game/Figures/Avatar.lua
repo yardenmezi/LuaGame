@@ -23,17 +23,12 @@ function Avatar:init(board, x, y, g)
   self.collisionType = collisionType.PLAYER
   self.madeNoise = false
   self.isAlive = true
-  self.score = 0
   self.timeOnAir = 0.2
   self.isJumping = true
 end
 
 function Avatar:makeNoise()
-  if self.score > 0 then
     Sounds['bark']:play()
-    self.madeNoise = true
-    self.score = self.score - 1
-  end
 end
 
 function Avatar:checkAlive()
@@ -67,9 +62,6 @@ function Avatar:getAction()
   elseif love.keyboard.isDown("down") then
     return ACTION.DOWN
   end
-  if keypressed == "q" then
-    self:makeNoise()
-  end
 end
 
 function Avatar:getLeftLim()
@@ -78,8 +70,8 @@ end
 
 function Avatar:handleScrolling()
   boardSize = board:getBoardSize()
-  rightLim = boardSize[1] / 3
-  leftLim = boardSize[1] / 8
+  local rightLim = boardSize[1] / 3
+  local leftLim = boardSize[1] / 8  
   if board:isOutOfLimits(self) then
     self.scrolling = 0
   else
@@ -95,22 +87,15 @@ function Avatar:handleScrolling()
   end
 end
 
+
 function Avatar:update(dt)
   Figure.update(self, dt)
   self:handleScrolling()
   -- TODO: HANDLE other actions
-  -- TODO: CHANGE TO changeble val
   if self.y > 430 then
     self.isAlive = false
-  else
-    local colType = board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
-    if colType[1] == CELL_TYPE.WORM then
-      -- TODO: CHANGE TO WON STATE/GAME OVER STATE
-      stateMachine:change('first')
-    elseif colType[1] == CELL_TYPE.LEAF then
-      self.score = self.score + board:remove(colType)
-      Sounds['eat']:play()
-    end
+  end
+    local collision = board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
     if self.timeOnAir <= 0 then
       self.timeOnAir = 0.2
       keypressed = {}
@@ -119,5 +104,5 @@ function Avatar:update(dt)
     if isJumping then
       self.timeOnAir = self.timeOnAir - dt
     end
+    return collision
   end
-end
