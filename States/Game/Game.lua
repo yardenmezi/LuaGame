@@ -40,10 +40,10 @@ end
 
 function Game:setObjects()
   self.player = nil
-  board = Board(width, height)
-  self.player = Avatar(board, STARTING_PT.X, STARTING_PT.Y, G)
+  self.board = Board(width, height)
+  self.player = Avatar(self.board, STARTING_PT.X, STARTING_PT.Y, G)
   for i=1, GameParameters.numBirds do
-    self.collidableObjects[i] = Bird(board, width * i, (height*i/4), G)
+    self.collidableObjects[i] = Bird(self.board, width * i, (height*i/4), G)
   end
   self:setButterflies()
 end
@@ -96,9 +96,9 @@ function Game:updateObjects(dt,requestedFlight)
   local collisionType = self.player:update(dt)
   if collisionType[1] == CELL_TYPE.LEAF then
     Sounds['eat']:play()
-    self.score = self.score + board:remove(collisionType)
+    self.score = self.score + self.board:remove(collisionType)
   end
-  board:update(dt)
+  self.board:update(dt)
   if requestedFlight then
     requestedFlight =  self.score>0
   end
@@ -141,7 +141,7 @@ function Game:render()
   -- TODO: check how to change it to love.graphics.translate(-math.floor(screenScroll), 0)
   local cloudsScale = 0.3
   love.graphics.draw(Images.backround, -skyScroll, 0, 0, cloudsScale)
-  board:render()
+  self.board:render()
 
   for i = 1, #self.collidableObjects do
     self.collidableObjects[i]:render()

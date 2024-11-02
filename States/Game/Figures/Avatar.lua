@@ -4,10 +4,9 @@ require "utils.ClassInit"
 
 
 Avatar = declareClass(Figure, Avatar)
-
+local image = Images['giraffe']
 local frames = {}
 for i = 1, 4 do
-  image = Images['giraffe']
   frames[i] = love.graphics.newQuad(image:getWidth() / 4 * (i - 1), 0, image:getWidth() / 4, image:getHeight(),
     image:getDimensions())
 end
@@ -20,7 +19,7 @@ function Avatar:init(board, x, y, g)
   self.dy = 0
   self.gravityForce = 0.1 * g
   self.scrolling = 0
-  self.collisionType = collisionType.PLAYER
+  self.collisionType = CollisionType.PLAYER
   self.madeNoise = false
   self.isAlive = true
   self.timeOnAir = 0.2
@@ -36,7 +35,7 @@ function Avatar:checkAlive()
 end
 
 function Avatar:hasMadeNoise()
-  output = self.madeNoise
+  local output = self.madeNoise
   self.madeNoise = false
   return output
 end
@@ -65,14 +64,14 @@ function Avatar:getAction()
 end
 
 function Avatar:getLeftLim()
-  return boardSize[1] / 3
+  return self.board:getBoardSize()[1] / 3
 end
 
 function Avatar:handleScrolling()
-  boardSize = board:getBoardSize()
+  local boardSize = self.board:getBoardSize()
   local rightLim = boardSize[1] / 3
   local leftLim = boardSize[1] / 8  
-  if board:isOutOfLimits(self) then
+  if self.board:isOutOfLimits(self) then
     self.scrolling = 0
   else
     if self.x > rightLim then
@@ -95,7 +94,7 @@ function Avatar:update(dt)
   if self.y > 430 then
     self.isAlive = false
   end
-    local collision = board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
+    local collision = self.board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
     if self.timeOnAir <= 0 then
       self.timeOnAir = 0.2
       keypressed = {}

@@ -12,9 +12,8 @@ function Butterfly:init(x, y, g, player)
     sizeX = 60,
     sizeY = 60,
     frames = frames,
-    fsizeX = image:getWidth() / 3,
-    fsizeY =
-        image:getHeight()
+    fsizeX = Images.butterfly:getWidth() / 3,
+    fsizeY =Images.butterfly:getHeight()
   }
   Still.init(self, x, y, imageProperties)
   self.player = player

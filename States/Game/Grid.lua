@@ -21,11 +21,11 @@ function Grid:init_matrix(board)
 end
 
 function Grid:init(board, cellSpanX, cellSpanY, img)
+  self.board = board
   self.cellSpanX = cellSpanX
   self.cellSpanY = cellSpanY
   self.renderScaleX = (board:getTileSize()[1] * cellSpanX) / img:getWidth()
   self.renderScaleY = (board:getTileSize()[2] * cellSpanY) / img:getHeight()
-  self.sprite = sprite
   self.map = self:init_matrix(board)
   self.img = img
 end
@@ -79,7 +79,7 @@ function Grid:renderGridCell(boardCellX, boardCellY)
     return false
   end
   if self.map[boardCellX][boardCellY] == 1 then
-    pt = board:getXYFromBoard(boardCellX, boardCellY)
+    local pt = self.board:getXYFromBoard(boardCellX, boardCellY)
     -- TODO: USE FRAMES.
     love.graphics.draw(self.img, pt[1], pt[2], 0, self.renderScaleX, self.renderScaleY)
     return true

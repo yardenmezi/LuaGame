@@ -1,6 +1,6 @@
 require "utils.ClassInit"
 
-collisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
+CollisionType = {BLOCK=1, HARM=3, REGULAR=4, PRIZE=5, PLAYER = 6}
 
 Collidable =declareClass(nil, Collidable)
 
@@ -11,7 +11,7 @@ function Collidable:init(x,y,sizeX,sizeY,virtPosDiff,virtSizeDiff)
   self.sizeY = sizeY
   self.virtSizeDiff = virtSizeDiff or {x=0, y=0}
   self.virtPosDiff = virtPosDiff or {x=0, y=0}
-  self.collisionType = collisionType.BLOCK
+  self.collisionType = CollisionType.BLOCK
 end
 
 
@@ -68,11 +68,11 @@ end
 
 function Collidable:handleCollision(solidObj)
   if self:checkCollision(solidObj) then
-    if solidObj.collisionType == collisionType.BLOCK then
+    if solidObj.collisionType == CollisionType.BLOCK then
       return self:handleBlockCollision(solidObj)
-    elseif solidObj.collisionType == collisionType.HARM then
+    elseif solidObj.collisionType == CollisionType.HARM then
       return self:handleHarmCollision(solidObj)
-    elseif solidObj.collisionType == collisionType.REGULAR then
+    elseif solidObj.collisionType == CollisionType.REGULAR then
       return self:handleRegCollision(solidObj)
     end
   end

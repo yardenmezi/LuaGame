@@ -10,11 +10,11 @@ end
 function Coin:init()
   local x, y = GetRandomPosition()
   Still.init(self, x, y, 60, 60, Images.coin)
-  self.collisionType = collisionType.PRIZE
+  self.collisionType = CollisionType.PRIZE
 end
 
 function Coin:handleCollision(solidObj)
-  if self.isVisible and self:checkCollision(solidObj) and solidObj.collisionType == collisionType.PLAYER then
+  if self.isVisible and self:checkCollision(solidObj) and solidObj.collisionType == CollisionType.PLAYER then
     self.img = nil
     self.isVisible = false
     return COIN_VALUE

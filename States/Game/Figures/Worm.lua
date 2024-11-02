@@ -19,7 +19,7 @@ frames ={love.graphics.newQuad(0, 0,500,Images['worm']:getHeight(), Images['worm
 
 function Worm:init(board,x, y,g)
     Figure.init(self,board,x,y,g,Images['worm'],70,70,frames,444,Images['worm']:getHeight(),0)
-    self.collisionType = collisionType.REGULAR
+    self.collisionType = CollisionType.REGULAR
 end
 
 

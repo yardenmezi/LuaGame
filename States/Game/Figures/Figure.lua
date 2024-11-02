@@ -81,7 +81,7 @@ end
 
 
 function Figure:handleRegCollision(solidObj)
-  isFigureAboveObject = self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y
+  local isFigureAboveObject = self.y + self.sizeY - self.speed -self.gravityForce  <= solidObj.y
 
   if isFigureAboveObject then
     self:setHeight(solidObj.y - self.sizeY)

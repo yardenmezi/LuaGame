@@ -1,11 +1,10 @@
 require "States/Game/Figures/Figure"
 
-onGround  = false
 Enemy = declareClass(Figure, Enemy)
 
 function Enemy:init(board,x, y,g,imageProperties,speed)
   Figure.init(self,board,x, y, g,imageProperties, speed)
-  self.collisionType = collisionType.HARM
+  self.collisionType = CollisionType.HARM
 end
 
 function Enemy:update(dt)

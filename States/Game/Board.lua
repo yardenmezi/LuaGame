@@ -69,7 +69,7 @@ function Board:fill_ground_tiles(map)
 end
 
 function Board:createLvl()
-  map = {}
+  local map = {}
   for i = 1, TILES_PER_ROW do
     map[i] = {}
     for j = 1, self.tilesPerCol do
@@ -164,9 +164,9 @@ function Board:render()
     for j = 1, self.tilesPerCol do
       local place = self:getXYFromBoard(i, j)
       self.leavesGrid:renderGridCell(i, j)
-      if map[i][j] == CELL_TYPE.GROUND then
+      if self.map[i][j] == CELL_TYPE.GROUND then
         love.graphics.draw(Images['grass'], place[1], place[2], 0, scale_x, scale_y)
-      elseif map[i][j] == CELL_TYPE.WORM then
+      elseif self.map[i][j] == CELL_TYPE.WORM then
         love.graphics.draw(Images['worm'], ((i - 1 - self.tilesGap) * TILE_WIDTH), (j - 1) * TILE_HEIGHT, 0, scale_x * 5,
           scale_y / 2)
       end
