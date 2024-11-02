@@ -10,8 +10,15 @@ for i = 1, 4 do
   frames[i] = love.graphics.newQuad(image:getWidth() / 4 * (i - 1), 0, image:getWidth() / 4, image:getHeight(),
     image:getDimensions())
 end
-local imageProperties = { img = image, sizeX = 100, sizeY = 150, frames = frames, fsizeX = image:getWidth() / 4, fsizeY =
-image:getHeight() }
+local imageProperties = {
+  img = image,
+  sizeX = 100,
+  sizeY = 150,
+  frames = frames,
+  fsizeX = image:getWidth() / 4,
+  fsizeY =
+      image:getHeight()
+}
 
 function Avatar:init(board, x, y, g)
   Figure.init(self, board, x, y, g, imageProperties, 15)
@@ -27,7 +34,7 @@ function Avatar:init(board, x, y, g)
 end
 
 function Avatar:makeNoise()
-    Sounds['bark']:play()
+  Sounds['bark']:play()
 end
 
 function Avatar:checkAlive()
@@ -70,7 +77,7 @@ end
 function Avatar:handleScrolling()
   local boardSize = self.board:getBoardSize()
   local rightLim = boardSize[1] / 3
-  local leftLim = boardSize[1] / 8  
+  local leftLim = boardSize[1] / 8
   if self.board:isOutOfLimits(self) then
     self.scrolling = 0
   else
@@ -86,7 +93,6 @@ function Avatar:handleScrolling()
   end
 end
 
-
 function Avatar:update(dt)
   Figure.update(self, dt)
   self:handleScrolling()
@@ -94,14 +100,14 @@ function Avatar:update(dt)
   if self.y > 430 then
     self.isAlive = false
   end
-    local collision = self.board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
-    if self.timeOnAir <= 0 then
-      self.timeOnAir = 0.2
-      keypressed = {}
-      isJumping = false
-    end
-    if isJumping then
-      self.timeOnAir = self.timeOnAir - dt
-    end
-    return collision
+  local collision = self.board:hasCollisionRange(self.x, self.y, self.sizeX, self.sizeY)
+  if self.timeOnAir <= 0 then
+    self.timeOnAir = 0.2
+    keypressed = {}
+    isJumping = false
   end
+  if isJumping then
+    self.timeOnAir = self.timeOnAir - dt
+  end
+  return collision
+end

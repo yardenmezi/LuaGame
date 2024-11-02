@@ -13,7 +13,7 @@ function Butterfly:init(x, y, g, player)
     sizeY = 60,
     frames = frames,
     fsizeX = Images.butterfly:getWidth() / 3,
-    fsizeY =Images.butterfly:getHeight()
+    fsizeY = Images.butterfly:getHeight()
   }
   Still.init(self, x, y, imageProperties)
   self.player = player
@@ -36,7 +36,7 @@ function Butterfly:update(dt, request)
   local requestCompleted = false
   if self:checkCollision(self.player) and request then
     Sounds['bark']:play()
-    requestCompleted = true    
+    requestCompleted = true
     self.movingTime = TIME_TO_MOVE
   end
   self.flyingAnim:update(dt)
