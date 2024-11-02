@@ -24,7 +24,7 @@ function Board:init(boardWidth, boardHeight)
   -- TILES_PER_ROW = boardWidth/TILE_WIDTH
   self.map = self:createLvl()
   self.tilesGap = 0
-  self.leavesGrid = Grid(self, 3, 3, images.coin)
+  self.leavesGrid = Grid(self, 3, 3, Images.coin)
   self:addRewards()
 end
 
@@ -40,7 +40,7 @@ function Board:generateGroundSurfaces()
   local groundSurfaces = {}
   local xbegin = 1
   local xend = math.ceil(SPEED * 3 / TILE_WIDTH)
-  for i = 1, gameParameters.numSurfaces do
+  for i = 1, GameParameters.numSurfaces do
     groundSurfaces[i] = {
       x = math.random(xbegin, xend),
       y = math.random(self.tilesPerCol * 4 / 5, self.tilesPerCol),
@@ -157,17 +157,17 @@ function Board:remove(cellType)
 end
 
 function Board:render()
-  local scale_x = TILE_WIDTH / images['grass']:getWidth()
-  local scale_y = TILE_HEIGHT / images['grass']:getHeight()
+  local scale_x = TILE_WIDTH / Images['grass']:getWidth()
+  local scale_y = TILE_HEIGHT / Images['grass']:getHeight()
   local tilesPerScreen = math.ceil(love.graphics.getWidth() / TILE_WIDTH)
   for i = 1 + self.tilesGap, tilesPerScreen + self.tilesGap do
     for j = 1, self.tilesPerCol do
       local place = self:getXYFromBoard(i, j)
       self.leavesGrid:renderGridCell(i, j)
       if map[i][j] == CELL_TYPE.GROUND then
-        love.graphics.draw(images['grass'], place[1], place[2], 0, scale_x, scale_y)
+        love.graphics.draw(Images['grass'], place[1], place[2], 0, scale_x, scale_y)
       elseif map[i][j] == CELL_TYPE.WORM then
-        love.graphics.draw(images['worm'], ((i - 1 - self.tilesGap) * TILE_WIDTH), (j - 1) * TILE_HEIGHT, 0, scale_x * 5,
+        love.graphics.draw(Images['worm'], ((i - 1 - self.tilesGap) * TILE_WIDTH), (j - 1) * TILE_HEIGHT, 0, scale_x * 5,
           scale_y / 2)
       end
     end

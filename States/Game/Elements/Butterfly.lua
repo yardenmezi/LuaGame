@@ -6,9 +6,9 @@ TIME_TO_MOVE = 0.4
 
 
 function Butterfly:init(x, y, g, player)
-  local frames = getFramesFromImage(images.butterfly, 3)
+  local frames = getFramesFromImage(Images.butterfly, 3)
   local imageProperties = {
-    img = images.butterfly,
+    img = Images.butterfly,
     sizeX = 60,
     sizeY = 60,
     frames = frames,

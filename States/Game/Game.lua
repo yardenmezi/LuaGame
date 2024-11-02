@@ -30,7 +30,7 @@ local scoreColor = { 0, 0, 1 }
 local height = love.graphics.getHeight()
 local width = love.graphics.getWidth()
 local heightThreshold = (3 * height) / 4
-local objectRange = (gameParameters.playerSpeed * 10)
+local objectRange = (GameParameters.playerSpeed * 10)
 local scorePosition = { 0, 1}
 
 function Game:setGraphicsSetting()
@@ -42,7 +42,7 @@ function Game:setObjects()
   self.player = nil
   board = Board(width, height)
   self.player = Avatar(board, STARTING_PT.X, STARTING_PT.Y, g)
-  for i=1, gameParameters.numBirds do
+  for i=1, GameParameters.numBirds do
     self.collidableObjects[i] = Bird(board, width * i, (height*i/4), g)
   end
   self:setButterflies()
@@ -80,7 +80,7 @@ function Game:init()
   self:setGraphicsSetting()
   self:setObjects()
   self.gameOverState = nil
-  sounds.gameMusic:play()
+  Sounds.gameMusic:play()
 end
 
 function Game:handlePlayerLost(dt)
@@ -112,25 +112,25 @@ function Game:update(dt)
   else
     self:updateObjects(dt)
     screenScroll = self.player:getScrolling()    
-    skyScroll = (skyScroll + gameParameters.skyScrollSpeed) % BACKGROUND_LOOPING_POINT
+    skyScroll = (skyScroll + GameParameters.skyScrollSpeed) % BACKGROUND_LOOPING_POINT
   end
 end
 
 function Game:stop()
-  sounds.gameMusic:stop()
+  Sounds.gameMusic:stop()
 end
 
 function Game:render()
   -- TODO: check how to change it to love.graphics.translate(-math.floor(screenScroll), 0)
   cloudsScale = 0.3
-  love.graphics.draw(images.backround, -skyScroll, 0, 0, cloudsScale)
+  love.graphics.draw(Images.backround, -skyScroll, 0, 0, cloudsScale)
   board:render()
 
   for i = 1, #self.collidableObjects do
     self.collidableObjects[i]:render()
   end
   self.player:render()
-  local scoreTxt = love.graphics.newText(fonts['game'], {scoreColor, self.player.score })  
+  local scoreTxt = love.graphics.newText(Fonts['game'], {scoreColor, self.player.score })  
   love.graphics.draw(scoreTxt, scorePosition[1],scorePosition[1])
   if self.gameOverState then
     self.gameOverState:render()

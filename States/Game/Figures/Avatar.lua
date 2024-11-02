@@ -7,7 +7,7 @@ Avatar = declareClass(Figure, Avatar)
 
 local frames = {}
 for i = 1, 4 do
-  image = images['giraffe']
+  image = Images['giraffe']
   frames[i] = love.graphics.newQuad(image:getWidth() / 4 * (i - 1), 0, image:getWidth() / 4, image:getHeight(),
     image:getDimensions())
 end
@@ -30,7 +30,7 @@ end
 
 function Avatar:makeNoise()
   if self.score > 0 then
-    sounds['bark']:play()
+    Sounds['bark']:play()
     self.madeNoise = true
     self.score = self.score - 1
   end
@@ -55,7 +55,7 @@ function Avatar:getAction()
   self.madeNoise = false
   if keypressed == "w" and self.onGround == true then
     if self.timeOnAir == 0.2 then
-      sounds['jump']:play()
+      Sounds['jump']:play()
       isJumping = true
     end
     return ACTION.UP
@@ -109,7 +109,7 @@ function Avatar:update(dt)
       stateMachine:change('first')
     elseif colType[1] == CELL_TYPE.LEAF then
       self.score = self.score + board:remove(colType)
-      sounds['eat']:play()
+      Sounds['eat']:play()
     end
     if self.timeOnAir <= 0 then
       self.timeOnAir = 0.2

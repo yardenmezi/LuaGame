@@ -9,7 +9,7 @@ end
 
 function Coin:init()
   x, y = GetRandomPosition()
-  Still.init(self, x, y, 60, 60, images.coin)
+  Still.init(self, x, y, 60, 60, Images.coin)
   self.collisionType = collisionType.PRIZE
 end
 

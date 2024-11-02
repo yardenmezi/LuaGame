@@ -16,12 +16,12 @@ local instruction = love.graphics.newText(font, {{1, 1, 0}, "Press enter to play
 
 function GameOver:init(hasWon)
   self.hasWon = hasWon
-  sounds.gameOver:play()
+  Sounds.gameOver:play()
 end
 
 function GameOver:update(hasWon)
   if  keypressed == "return" then
-    sounds.gameOver:stop()
+    Sounds.gameOver:stop()
     stateMachine:change('game')
   end
 end
